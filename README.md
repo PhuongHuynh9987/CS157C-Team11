@@ -9,5 +9,5 @@
   - March 14th, 2024:
       - frontend finish homepage, login, and register page
       - To do:
-      -   need to discuss to make a decision on the Redis data model
-      -   need to talk about connecting frontend and backend as well as with Redis database
+         - need to discuss to make a decision on the Redis data model
+         - need to talk about connecting frontend and backend as well as with Redis database
