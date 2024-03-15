@@ -5,7 +5,7 @@
   - March 9th, 2024:
       - flow diagram and UX/UI brief design
       - frontend with JavaScript
-  - Todo: use Python for backend and connect to the front end 
+      - Todo: use Python for backend and connect to the front end 
   - March 14th, 2024:
       - frontend finish homepage, login, and register page
   - To do:
