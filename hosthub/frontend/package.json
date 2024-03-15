@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "autoprefixer": "^10.4.18",
+    "axios": "^1.6.7",
+    "bcryptjs": "^2.4.3",
+    "multiselect-react-dropdown": "^2.0.25",
     "postcss": "^8.4.35",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
