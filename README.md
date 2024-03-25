@@ -15,12 +15,12 @@
       - worked on backend, need to continue
       - frontend with UX/UI is approved by all members
 ### Implementation:
-##### Download python3 and redis-stack-server
-##### Clone the repo, then in Visual Studio Code, open the folder and in the terminal,
-- Frontend:
-      - cd to frontend
-      - npm run dev (or yarn if use yarn)
-- Backend:
-      - cd to backend:api
-      - source venv/bin/activate
-      - python3 server.py
+- Download python3 and redis-stack-server
+- Clone the repo, then in Visual Studio Code, open the folder and in the terminal,
+-   Frontend:
+      + cd to frontend
+      + npm run dev (or yarn if use yarn)
+-   Backend:
+      + cd to backend:api
+      + source venv/bin/activate
+      + python3 server.py
