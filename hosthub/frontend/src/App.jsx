@@ -28,7 +28,8 @@ function App() {
             <Route index element={<IndexPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/account/:subpage" element={<UserInfoPage />} />
+            <Route path="/account/profile" element={<UserInfoPage />} />
+            <Route path="/account/hostingInfo" element={<HostSignUp />} />
             <Route path="/hostpage/:id" element={<HostInfo />} />
             <Route path="/hostSignup" element={<HostSignUp />} />
             {/* <Route path="/host/:id" element={<HostInfo />} />  */}

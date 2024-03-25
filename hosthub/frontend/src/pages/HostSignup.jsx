@@ -2,20 +2,49 @@ import bed from "../assets/bed-solid.svg";
 import truckPlane from "../assets/truck-plane-solid.svg";
 import kitchen from "../assets/kitchen-set-solid.svg"
 import groceries from "../assets/groceries-svgrepo-com.svg"
-
-
+import pets from "../assets/pets.svg"
+import axios from "axios";
+import { useContext, useState } from "react";
+import { UserContext } from "../UserContext.jsx";
+import { Navigate, redirect } from "react-router-dom";
 
 export default function HostSignUp(){
-    const [addressNumber, setAddressNumber] = ('');
-    const [addressStreet, setAddressStreet] = ('');
+    const [title, setTitle] = useState('');
+    const [desc, setDesc] = useState('');
+    const [addressNumber, setAddressNumber] = useState('');
+    const [addressStreet, setAddressStreet] = useState('');
+    const [cityStateZip, setCityStateZip] = useState('');
+    const [photo, setPhoto] = useState([]);
+    const [perks, setPerks] = useState([]);
+    const [redirect, setRedirect] = useState(false)
+    const {user} = useContext(UserContext);
 
-    async function hostRegister(){
+    async function hostRegister(ev){
         ev.preventDefault();
-        const data = await axios.post('/host', {
-            addressNumber,
-            addressStreet
-        })
-        setRedirect(true);
+        // if (!user) {
+        //     <Navigate to ={'/login'} />
+        // }
+        const id = user.id;
+        try {
+            const data = await axios.post('/host', {
+                id,
+                title,
+                desc,
+                addressNumber,
+                addressStreet,
+                cityStateZip,
+                // photo,
+                // perks
+            })
+            setRedirect(true);
+        }
+        catch(e){
+            console.log(e);
+        }
+
+        if (redirect){
+            <Navigate to ={'/account'} />
+        }
     }
     return (
         <div className="m-12">
@@ -24,33 +53,61 @@ export default function HostSignUp(){
                 <h2 className="font-medium text-2xl mt-4">Title</h2>
                 <p className="text-gray-400 w-56">Title as a host</p>
                 <input className="p-2" 
-                    type="text" 
+                    type="text"
+                    value = {title}
+                    onChange={e=>setTitle(e.target.value)}
                     placeholder="title, for example: welcome to my welcoming accomondation" />
-            
+
+
                 <h2 className="text-2xl mt-4">Description</h2>
                 <p className="text-gray-400 w-56">About us section</p>
-                <input className="p-2" type="text" placeholder="tell the host seekers about your service" />
+                {/* <input className="p-2" 
+                        type="text" 
+                        value = {desc}
+                        onChange={e=>setDesc(e.target.value)}
+                        placeholder="tell the host seekers about your service" /> */}
+                <textarea className="p-2" 
+                        type="text" 
+                        value = {desc}
+                        onChange={e=>setDesc(e.target.value)}
+                        placeholder="tell the host seekers about your service" />
 
                 <h2 className="text-2xl mt-4">Address</h2>
                 <div className="flex gap-3 justify-center items-center">
                     <p className="text-gray-400 w-56">Number: </p>
-                    <input className="p-2" type="text"value = {addressNumber} placeholder="example: 1112" />
+                    <input className="p-2" 
+                            type="text"
+                            value = {addressNumber} 
+                            onChange={e=>setAddressNumber(e.target.value)}
+                            placeholder="example: 1112" />
                 </div>
                 <div className="flex gap-3 justify-center items-center">
                     <p className="text-gray-400 w-56">Street: </p>
-                    <input className="p-2" type="text"value = {addressStreet} placeholder="example: 12th Street" />
+                    <input className="p-2" 
+                            type="text"
+                            value = {addressStreet}
+                            onChange={e=>setAddressStreet(e.target.value)}
+                            placeholder="example: 12th Street" />
                 </div>
 
                 <div className="flex gap-3 justify-center items-center">
                     <p className="text-gray-400 w-56">City, State, and Zip Code </p>
-                    <input className="p-2" type="text" placeholder="example: San Jose, CA, 93451" />
+                    <input className="p-2"
+                            type="text"
+                            value = {cityStateZip}
+                            onChange={e=>setCityStateZip(e.target.value)}
+                            placeholder="example: San Jose, CA, 93451" />
                 </div>
 
                 <h2 className="text-2xl mt-4">Photos</h2>
                 <p className="text-gray-400 w-56">more = better</p>
                
                 <div className="flex items-center gap-4">
-                    <input className="p-2" type="text" placeholder="Addding a photo using a link" />
+                    <input className="p-2" 
+                            type="text" 
+                            value = {photo}
+                        onChange={e=>setPhoto(e.target.value)}
+                            placeholder="Addding a photo using a link" />
                     <button className="secondary h-10 text-white">Add photo</button>
                 </div>
                 
@@ -95,8 +152,15 @@ export default function HostSignUp(){
                         <img className="w-7" src={bed} alt="" />
                         <span>Bedroom</span>
                     </label>
+
+                    <label className="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="" />
+                        <img className="w-6" src={pets} alt="" />
+                        <span>Pets allowed</span>
+                    </label>
+
                 </div>
-                <button className="primary mt-10">Register</button>
+                <button className="primary my-16">Register</button>
             </form>
         </div>
     )

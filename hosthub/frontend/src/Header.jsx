@@ -9,7 +9,7 @@ import axios from "axios";
 export default function Header(){
   const [showList, setShowList] = useState(false);
   const [redirect, setRedirect] = useState('')
-  const {user,setUser} = useContext(UserContext)
+  const {user,setUser,setIsHost} = useContext(UserContext)
 
   const showDone = () => {
     if(showList === false) setShowList(true);
@@ -33,6 +33,7 @@ export default function Header(){
   async function logout(){
     await axios.post("/logout");
     setUser(null)
+    setIsHost(false)
     setRedirect('/')
   }
 

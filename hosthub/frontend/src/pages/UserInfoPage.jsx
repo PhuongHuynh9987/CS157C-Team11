@@ -5,13 +5,14 @@ import { Link, Navigate, useParams } from "react-router-dom";
 
 
 export default function UserInfoPage(){
-    const {user} = useContext(UserContext);
-    const [isHost, setIsHost] = useState(false);
+    const {user,ready,isHost} = useContext(UserContext);
     
-    console.log(user)
-    if (!user){
+    if (ready && !user){
         return <Navigate to = {'/login'} />
     }
+
+    console.log("here")
+    console.log(isHost)
 
     let {subpage} = useParams();
     if (subpage === undefined){
@@ -43,9 +44,10 @@ export default function UserInfoPage(){
                   
                     <div className="shadow-2xl p-4 rounded-xl">
                         <h2 className="font-bold text-2xl text-blue-500">Phuong Huynh</h2>
-                        <div className="flex justify-center mt-5">
+                        <div className="flex justify-center my-4">
                             <img className="aspect-square object-cover rounded-full w-48" src="https://expertphotography.b-cdn.net/wp-content/uploads/2018/10/cool-profile-pictures-retouching-1.jpg" alt="" />
                         </div>
+                        <Link><h2 className="font-semibold underline">Edit Profile</h2></Link>
                     </div>
 
                     <div className="shadow-2xl p-4 rounded-xl flex flex-col justify-between mb-4">

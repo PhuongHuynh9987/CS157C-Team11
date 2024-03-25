@@ -1,5 +1,4 @@
-import { Link, Navigate } from "react-router-dom";
-// import Register from './Register';
+import { Link, Navigate } from "react-router-dom"; 
 import {useContext, useState} from "react";
 import axios from "axios";
 import { UserContext } from "../UserContext.jsx";
@@ -10,7 +9,7 @@ export default function LoginPage() {
     const [redirect, setRedirect] =  useState(false);
     const [wrongPassword, setWrongPassword] =  useState(false);
     const [noUser, setNoUser] =  useState(false);
-    const {setUser} = useContext(UserContext);
+    const {isHost,setUser,setIsHost} = useContext(UserContext);
 
     async function login(ev){
         ev.preventDefault();
@@ -29,7 +28,11 @@ export default function LoginPage() {
             else {
                 axios.get("/profile").then(({data})=>{
                     setUser(data)
+                    if (data.hostId != undefined){
+                        setIsHost(true) 
+                    }
                 })
+                
                 setRedirect(true);
             }
             
