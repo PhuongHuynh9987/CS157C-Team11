@@ -8,8 +8,8 @@ import axios from "axios";
 
 export default function Header(){
   const [showList, setShowList] = useState(false);
-  const [redirect, setRedirect] = useState("")
-  const {user} = useContext(UserContext)
+  const [redirect, setRedirect] = useState('')
+  const {user,setUser} = useContext(UserContext)
 
   const showDone = () => {
     if(showList === false) setShowList(true);
@@ -27,17 +27,17 @@ export default function Header(){
   }
 
   function removeToggle(){
-    setShowList(false);
+    if (showList === true) setShowList(false);
   }
 
-  function logout(){
-    axios.post("/logout");
+  async function logout(){
+    await axios.post("/logout");
     setUser(null)
     setRedirect('/')
   }
 
     return (
-        <div className="h-28" ref ={screen}>
+        <div className="h-28" ref ={screen} onClick={removeToggle}>
           <header className="flex items-center justify-between gap-6 mx-4" >
               <div className="flex items-center justify-center">
               <Link to= {"/"} className="flex gap-1 items-center">   
@@ -46,7 +46,7 @@ export default function Header(){
                 </div>
               </Link> 
             </div>
-            <div className="border border-2 border-blue-200 shadow-xl w-full rounded-full flex items-center justify-round gap-5">
+            <div className="border border-2 border-blue-100 shadow-xl w-full rounded-full flex items-center justify-round gap-5">
               {/* <input className="shadow-xl lg:w-11/12 md:w-10/12 sm:w-9/12 rounded-l-full p-4" type="text" placeholder="search for a host" > */}
               <form className="flex gap-1 justify-start text-left w-full m-0">
                 <input type="date"/>
@@ -84,7 +84,7 @@ export default function Header(){
               </div>
             {user && (
               <div className="">
-                <h1 className="font-semibold">{user.data}</h1>
+                <h1 className="font-semibold text-blue-400">{user.firstName}</h1>
               </div>
             )}
             </button>
@@ -107,8 +107,9 @@ export default function Header(){
           {user && showList &&  (
             <div className="flex justify-end flow font-medium font-mono">
               <div className="bg-blue-100 p-4 w-60 rounded-xl flex flex-col gap-5" id = "clicked">
-                <Link to="/account" onClick={removeToggle}><h2>Account</h2></Link>
-                <Link onClick={[removeToggle, logout]} ><h2>Logout </h2></Link>    
+                <Link to="/account/profile" onClick={removeToggle}><h2>Account</h2></Link>
+                <Link to="/" onClick={removeToggle}><h2>Home</h2></Link>
+                <Link onClick={logout} ><h2>Logout </h2></Link>    
               </div>  
             </div>
           )}

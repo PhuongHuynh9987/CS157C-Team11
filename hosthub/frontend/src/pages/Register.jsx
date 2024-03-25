@@ -4,7 +4,9 @@ import axios from "axios";
 // import LoginPage from "./LoginPage";
 
 export default function Register(){
-    const [username, setName] = useState('');
+    const [username, setUsername] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [redirect, setRedirect] = useState('');
@@ -13,6 +15,8 @@ export default function Register(){
         ev.preventDefault();
         const data = await axios.post('/register', {
             username,
+            firstName,
+            lastName,
             email,
             password
         })
@@ -24,13 +28,21 @@ export default function Register(){
     }
     
     return(
-        <div className="flex grow justfiy-round items-center mb-32">
+        <div className="h-screen flex grow justfiy-round items-center">
             <div className="flex flex-col grow text-center">
                 <h1 className="text-4xl text-center font-bold">Register</h1>
                 <form className="max-w-lg mx-auto text-center mt-3" onSubmit={registerUser}>
+                    <input type="text" placeholder="First Name" 
+                            value = {firstName}
+                            onChange={ev => setFirstName(ev.target.value)}
+                            className="p-4"/>
+                    <input type="text" placeholder="Last Name" 
+                            value = {lastName}
+                            onChange={ev => setLastName(ev.target.value)}
+                            className="p-4"/>
                     <input type="text" placeholder="username" 
                             value = {username}
-                            onChange={ev => setName(ev.target.value)}
+                            onChange={ev => setUsername(ev.target.value)}
                             className="p-4"/>
                     <input type="email" placeholder="your@email.com" 
                             value = {email}
