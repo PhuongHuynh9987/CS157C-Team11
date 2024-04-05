@@ -14,6 +14,9 @@
   - March 24
       - worked on backend, need to continue
       - frontend with UX/UI is approved by all members
+  - April 5
+      - Finished setting up for the webpage
+      - Need a meeting to discuss data models used for Redis database 
    
 
 ### Data Model:
