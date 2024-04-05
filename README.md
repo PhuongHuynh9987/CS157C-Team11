@@ -14,6 +14,15 @@
   - March 24
       - worked on backend, need to continue
       - frontend with UX/UI is approved by all members
+   
+
+### Data Model:
+- User: JsonModel
+- Host: JsonModel
+  - Availability (list?)
+- Cart
+- Review?
+
 ### Implementation:
 - Download python3 and redis-stack-server
 - Clone the repo, then in Visual Studio Code, open the folder and in the terminal,
