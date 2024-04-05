@@ -1,19 +1,21 @@
-import { React,  useContext } from "react";
+import { React, useState,useEffect, useContext } from "react";
+import axios from "axios";
 import { UserContext } from "../UserContext";
 import { Link, Navigate, useParams } from "react-router-dom";
-import HostSignUp from "./HostSignup";
-import EditProfile from "./EditProfile";
+
 
 export default function UserInfoPage(){
-    const {user,ready,isHost} = useContext(UserContext);
-
-    if (ready && !user){
+    const {user} = useContext(UserContext);
+    const [isHost, setIsHost] = useState(false);
+    
+    console.log(user)
+    if (!user){
         return <Navigate to = {'/login'} />
     }
 
     let {subpage} = useParams();
-    if (subpage === undefined ){
-       subpage = 'profile'
+    if (subpage === undefined){
+        subpage = 'profile'
     }
 
     function linkClass(type=null){
@@ -27,36 +29,33 @@ export default function UserInfoPage(){
         }
         return classes
     }
-    
+
     return (
         <div className="mx-20 mt-12">
-            
              <nav className="w-full flex mb-10 gap-6 justify-center font-semibold text-blue-600">
                 <Link className={linkClass('profile')} to={'/account/profile'}>My profile</Link>
                 {isHost && (
-                    <Link className={linkClass('hostingInfo')} to={'/account/hostingInfo'}>My hosting information</Link>
+                <Link className={linkClass('hostingInfo')} to={'/account/hostingInfo'}>My hosting information</Link>
                 )}
             </nav>
-
-            {subpage === 'hostingInfo' && <HostSignUp />}
-            {subpage === 'editProfile' && <EditProfile />}
-            {subpage === 'profile' && (
-                <div className="grid grid-cols-[35%_65%] gap-10 text-center h-screen mb-36">
+            <div className="grid grid-cols-[35%_65%] gap-10 text-center h-screen mb-36">
                 <div className="grid grid-rows-[35%_65%] gap-4">
                   
                     <div className="shadow-2xl p-4 rounded-xl">
-                        <h2 className="font-bold text-2xl text-blue-500">{user?.firstName} {user?.lastName}</h2>
-                        <div className="flex justify-center my-5">
-                            <img className="aspect-square object-cover rounded-full w-48" 
-                                src ={'http://localhost:5000/uploads/'+ user?.profilePhoto}  alt="" />
+                        <h2 className="font-bold text-2xl text-blue-500">Phuong Huynh</h2>
+                        <div className="flex justify-center mt-5">
+                            <img className="aspect-square object-cover rounded-full w-48" src="https://expertphotography.b-cdn.net/wp-content/uploads/2018/10/cool-profile-pictures-retouching-1.jpg" alt="" />
                         </div>
-                        <Link to ={'/account/editProfile'}><h2 className="font-semibold underline">Edit Profile</h2></Link>
                     </div>
 
                     <div className="shadow-2xl p-4 rounded-xl flex flex-col justify-between mb-4">
                         <div>
                             <h2 className="font-bold text-2xl text-blue-500">About me</h2>
-                            <p className="text-left mt-4">{user?.desc}</p>
+                            <p className="text-left mt-4">Lorem ipsum, dolor sit amet 
+                                consectetur adipisicing elit. Corporis quasi, 
+                                praesentium pariatur ipsa cumque culpa placeat! Itaque, 
+                                temporibus praesentium? Veritatis illo laborum ab minus 
+                                eum nesciunt ducimus magni aut officia!</p>
                         </div>
                         {!isHost && (
                             <Link to={'/hostSignup'}><h2 className="underline font-bold">Want to host others?</h2></Link>
@@ -79,11 +78,6 @@ export default function UserInfoPage(){
                     </div>
                 </div>
             </div>
-            )}
-         
-         <img src="/Users/huynhphuong/Desktop/CS-157C/157C-project/hosthub/frontend/src/assets/HostHub.png" alt="" />
-
-           
         </div>
     )
 }

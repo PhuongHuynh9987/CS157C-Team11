@@ -1,4 +1,4 @@
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import img from "./assets/HostHub.png";
 import { useContext, useEffect, useRef, useState } from "react";
 import Multiselect from 'multiselect-react-dropdown';
@@ -8,8 +8,8 @@ import axios from "axios";
 
 export default function Header(){
   const [showList, setShowList] = useState(false);
-  const [redirect, setRedirect] = useState(false)
-  const {user,setUser,setIsHost} = useContext(UserContext)
+  const [redirect, setRedirect] = useState('')
+  const {user,setUser} = useContext(UserContext)
 
   const showDone = () => {
     if(showList === false) setShowList(true);
@@ -32,13 +32,8 @@ export default function Header(){
 
   async function logout(){
     await axios.post("/logout");
-    setRedirect(true)
     setUser(null)
-    setIsHost(false)
-  }
-
-  if (redirect){
-    <Navigate to={'/login'} />
+    setRedirect('/')
   }
 
     return (

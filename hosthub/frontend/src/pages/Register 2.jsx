@@ -10,42 +10,28 @@ export default function Register(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [redirect, setRedirect] = useState('');
-    const [emptyField, setEmptyField] = useState('')
 
     async function registerUser(ev){
         ev.preventDefault();
-       
-        if (username === '' || firstName === '' ||email === '' || password === '') {
-            setEmptyField(false)
-            console.log('here')
-        }
-            
-        else {
-            await axios.post('/register', {
-                username,
-                firstName,
-                lastName,
-                email,
-                password
-            })
-            setRedirect(true);
-        }
+        const data = await axios.post('/register', {
+            username,
+            firstName,
+            lastName,
+            email,
+            password
+        })
+        setRedirect(true);
     }
 
     if (redirect){
         return <Navigate to={'/login'} />
     }
-
-
+    
     return(
         <div className="h-screen flex grow justfiy-round items-center">
             <div className="flex flex-col grow text-center">
-                
                 <h1 className="text-4xl text-center font-bold">Register</h1>
-                {!emptyField && (
-                    <h3 className="text-red-600 my-3 font-semibold">Please fill every field!!</h3>
-                )}
-                <form className="max-w-lg mx-auto text-center mt-3" onMouseDown={e=>setEmptyField(true)} onSubmit={registerUser}>
+                <form className="max-w-lg mx-auto text-center mt-3" onSubmit={registerUser}>
                     <input type="text" placeholder="First Name" 
                             value = {firstName}
                             onChange={ev => setFirstName(ev.target.value)}

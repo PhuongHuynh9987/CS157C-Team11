@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+form input[type='text'], input[type='email'], input[type="password"]{
+    @apply w-full border border-blue-200 my-2 rounded-2xl;
+}
+
+form input[type='text'], input[type='email'], input[type="password"]{
+    @apply w-full border border-blue-200 my-2 rounded-2xl;
+}
+
+form input[type = 'date'] {
+    @apply w-full px-5 text-gray-500  rounded-full;
+    cursor: pointer;
+}
+
+form input[type = 'date']:hover {
+    @apply bg-blue-100;
+}
+
+.multiselect {
+    @apply rounded-full px-5;
+}
+
+.multiselect:hover {
+    @apply bg-blue-100;
+}
+
+.w-full div {
+    border: none;
+}
+
+button.primary {
+    @apply bg-yellow-300 w-full rounded-2xl p-2;
+}
+
+button.secondary {
+    @apply bg-blue-300 w-1/4 rounded-lg;
+}
+
+.map {
+    height: 100%;
+    width: 100%;
+}
+
+.search-wrapper {
+    display: flex;
+}
+
+.search-wrapper span {
+    @apply bg-blue-300;
+}
+.closeIcon {
+    @apply mr-3;
+}
+
+hr {
+    height: 0.1em;
+}

@@ -1,4 +1,5 @@
 from redis_om import (Field, JsonModel,Migrator, HashModel)
+from typing import Optional
 from pydantic import ValidationError
 import redis
 
@@ -9,9 +10,6 @@ class User(JsonModel):
     firstName: str 
     lastName: str
     email: str 
+    desc: Optional[str]
     password: str
-
-
-# data = User.find(User.pk == "01HSHBX59GDK9CT0P2BMF4Q8DS")
-
-# print(data[0])
+    profilePhoto: Optional[str]

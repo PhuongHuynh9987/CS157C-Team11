@@ -1,63 +1,56 @@
 import { Link ,Navigate} from "react-router-dom"
 import Map from "../Map.jsx"
-import { UserContext } from "../UserContext.jsx";
-import {useContext, useEffect, useState} from "react";
-import axios from "axios";
 import bed from "../assets/bed-solid.svg";
 import truckPlane from "../assets/truck-plane-solid.svg";
 import kitchen from "../assets/kitchen-set-solid.svg"
-import groceries from "../assets/groceries-svgrepo-com.svg"
-import pets from "../assets/pets.svg"
+import { UserContext } from "../UserContext.jsx";
+import {useContext, useState} from "react";
+// import axios from "axios";
+
+
 
 export default function IndexPage (){
-    const {user,ready,isHost} = useContext(UserContext);
-    const [allHosts, setAllHosts] = useState([])
-
-    const icons = [truckPlane, truckPlane, groceries, kitchen, bed, pets]
-
-    useEffect(()=> {
-        axios.get('/fetch_allHost').then(({data}) => {
-           setAllHosts(data)
-           console.log(data[1])
-        })
-    },[])
-
+    // const {user} = useContext(UserContext);
+    
+    
     return (
+        // <div className="-m-5 bg-cover bg-[url('https://bpb-us-w2.wpmucdn.com/blogs.sjsu.edu/dist/f/94/files/2022/01/ADJ_sjsu-gate-dschmitz-111417-3154_flat-2.jpg')]">
         <div className="">
            <div className="text-center">
                 <h1 className="text-3xl font-mono mt-10">Welcome to SJSU, your new journey!</h1>
+            
                 <div className="h-svh my-20">
                     <div className="grid gap-1 ml-10 mr-14 grid-cols-[65%_35%] h-full">
-                    <div className="flex flex-col gap-5 overflow-y-scroll pr-10">
-                        {allHosts.length > 0 && allHosts.map((host,key) => (
-                                <Link to={'/hostpage/'+host.pk} key={key} >
-        
-                                    <div className= "text-left border-4 border-blue-100 p-4 flex flex-col gap-3 rounded-lg">
-                                        <div className="px-2">                                    
-                                        <div className="flex gap-5 py-4">
-                                                <img className="aspect-square object-cover rounded-2xl w-44" src={'http://localhost:5000/uploads/'+ host.uploadedPhotos[0]}alt="" />
-                                                <div>
-                                                    <h1 className="text-2xl text-blue-500 font-bold">{host.title}</h1>
-                                                    <p className="h-36 overflow-scroll py-3">{host.desc}</p>                               
-                                                </div>
+                        <div className="flex flex-col gap-5 overflow-y-scroll pr-10">
+
+                        <Link to={'/hostpage/:name'}>
+                            <div className= "text-left border-4 border-blue-100 p-4 flex flex-col gap-3 rounded-lg">
+                                <div className="px-2">                                    
+                                   <div className="flex gap-5 py-4">
+                                        <img className="aspect-square object-cover rounded-2xl w-44" src="https://cpage.sfsu.edu/sites/default/files/images/pathway-sfstate-bridge-1920x800.jpg" alt="" />
+                                        <div>
+                                            <h1 className="text-2xl text-blue-500 font-bold">Mr. Bob's Home</h1>
+                                            <p className="h-36 overflow-scroll py-3">Lorem ipsum dolor sit amet consectetur adipisicing elit,
+                                            libero est facere aut obcaecati officia iure fuga sequi, accusamus voluptatum?</p>                               
                                         </div>
-                                        </div>
-                                        <div className="flex justify-between px-2">
-                                            <div className="flex items-center gap-3">
-                                                <h2>{}</h2>
-                                                {host.perks && host.perks.map((perk,key)=>(
-                                                    <img className="w-7" src={icons[key]} alt="" />
-                                                ))}
-                                               
-                                            </div>
-                                            <h4 className="italic">23 mile</h4>
-                                          
-                                        </div>
+                                   </div>
+                                </div>
+
+                           
+                                    <div className="flex justify-between px-2">
+                                       <div className="flex items-center gap-3">
+                                            <img className="w-7" src={bed} alt="" />
+                                            <img className="w-7" src={truckPlane} alt="" />
+                                            <img className="w-6" src={kitchen} alt="" />
+                                         
+                                       </div>
+                                       <h4 className="italic">23 mile</h4>
+                                        {/* <button className="secondary">View</button> */}
                                     </div>
-                                </Link>
-                            ))}
-                        </div>
-                        {/* <Link to={'/hostpage/:name'}>
+                            </div>
+                        </Link>
+
+                        <Link to={'/hostpage/:name'}>
                             <div className= "text-left border-4 border-blue-100 p-4 flex flex-col gap-3 rounded-lg">
                             <div className="px-2">
                                 <div className="flex gap-5 py-4">
@@ -76,6 +69,7 @@ export default function IndexPage (){
                                     
                                 </div>
                                 <h4 className="italic">36 mile</h4>
+                                {/* <button className="secondary">View</button> */}
                             </div>    
                             </div>
                         </Link>
@@ -99,7 +93,7 @@ export default function IndexPage (){
                                            <img className="w-7" src={truckPlane} alt="" />           
                                       </div>
                                       <h4 className="italic">4 mile</h4>
-                                     
+                                       {/* <button className="secondary">View</button> */}
                                    </div>
                            </div>
                            </Link>
@@ -125,10 +119,13 @@ export default function IndexPage (){
                                           
                                       </div>
                                       <h4 className="italic">10 mile</h4>
-                                     
+                                       {/* <button className="secondary">View</button> */}
                                    </div>
                            </div>
-                           </Link> */}
+                           </Link>
+                        </div>
+                        
+
 
                         <div className="sticky">                
                             <Map />

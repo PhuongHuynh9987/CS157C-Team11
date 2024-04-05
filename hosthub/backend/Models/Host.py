@@ -1,5 +1,6 @@
 from redis_om import (Field, JsonModel,Migrator, HashModel)
 from pydantic import ValidationError
+from typing import Optional
 import redis
 from Models import User
 
@@ -17,8 +18,8 @@ class Host(JsonModel):
     addressNumber: str
     addressStreet: str
     cityStateZip: str
-    # photo: list
-    # perks: list
+    uploadedPhotos: Optional[list]
+    perks: Optional[list]
 
 
 # host = Host(
@@ -29,6 +30,14 @@ class Host(JsonModel):
 # host.save()
 # Migrator().run()
 
-# host = Host.find(Host.owner == '01HSVKYCT8RVHG8AQ41RM5GT0')
+# host = Host.find(Host.owner == '01HTDDNEVB6GJW94WVYFQF69JY')
+# host.desc = "Lorem ipsum!!!"
+# host.save()
 
-# print(len(list(host)))
+# host = Host.find().all()
+# host_list = []
+# for i in host:
+#     # print(dict(i))
+#     host_list.append(dict(i))
+
+# print(host_list)

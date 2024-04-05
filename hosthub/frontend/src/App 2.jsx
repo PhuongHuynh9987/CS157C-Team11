@@ -15,7 +15,6 @@ import UserInfoPage from "./pages/UserInfoPage.jsx";
 import axios from "axios";
 import { UserContextProvider } from "./UserContext.jsx";
 import HostSignUp from "./pages/HostSignup.jsx"
-import EditProfile from "./pages/EditProfile.jsx"
 
 axios.defaults.baseURL = "http://localhost:5000";
 axios.defaults.withCredentials = true;
@@ -32,7 +31,7 @@ function App() {
             <Route path="/account/:subpage" element={<UserInfoPage />} />
             <Route path="/hostpage/:id" element={<HostInfo />} />
             <Route path="/hostSignup" element={<HostSignUp />} />
-            {/* <Route path="/editProfile" element={<EditProfile />} /> */}
+            {/* <Route path="/host/:id" element={<HostInfo />} />  */}
           </Route>
       </Routes>
     </UserContextProvider>
