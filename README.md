@@ -33,6 +33,6 @@
       + cd to frontend
       + npm run dev (or yarn if use yarn)
    - Backend:
-      + cd to backend:api
+      + cd to backend
       + source venv/bin/activate
       + python3 server.py
