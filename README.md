@@ -11,14 +11,17 @@
       - To do:
          - need to discuss to make a decision on the Redis data model
          - need to talk about connecting frontend and backend as well as with Redis database
-  - March 24
+  - March 24th
       - worked on backend, need to continue
       - frontend with UX/UI is approved by all members
-  - April 5
+  - April 5th
       - Finished setting up for the webpage
-      - Need a meeting to discuss data models used for Redis database 
+      - Need a meeting to discuss data models used for Redis database
+  - April 9th
+      - Teammates discussed on the Redis Data models
+      - Elena will continue on implementing data models for Cart, Host's availability, and Booking History
+      - Phuong will start working on drawing data model diagrams and report setup.  
    
-
 ### Data Model:
 - User: JsonModel
 - Host: JsonModel
