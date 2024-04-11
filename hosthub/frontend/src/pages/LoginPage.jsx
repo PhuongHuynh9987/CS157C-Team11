@@ -9,7 +9,7 @@ export default function LoginPage() {
     const [redirect, setRedirect] =  useState(false);
     const [wrongPassword, setWrongPassword] =  useState(false);
     const [noUser, setNoUser] =  useState(false);
-    const {setUser,setIsHost} = useContext(UserContext);
+    const {setUser,setIsHost,setReady} = useContext(UserContext);
 
     async function login(ev){
         ev.preventDefault();
@@ -29,6 +29,7 @@ export default function LoginPage() {
                 setUser(userInfo.data)
                 if (userInfo.data.hostId != undefined){
                     setIsHost(true) 
+                    setReady(true)
                 }
                 setRedirect(true);
             }

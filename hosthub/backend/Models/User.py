@@ -13,3 +13,6 @@ class User(JsonModel):
     desc: Optional[str]
     password: str
     profilePhoto: Optional[str]
+    gender: Optional[str]
+    status: Optional[str]
+    bookingHistory: list

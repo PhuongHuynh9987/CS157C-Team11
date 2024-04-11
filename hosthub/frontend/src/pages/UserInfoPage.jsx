@@ -28,6 +28,7 @@ export default function UserInfoPage(){
         return classes
     }
     
+    console.log(ready)
     return (
         <div className="mx-20 mt-12">
             

@@ -33,7 +33,7 @@ button.primary {
 }
 
 button.secondary {
-    @apply bg-blue-300 w-1/4 rounded-lg;
+    @apply bg-blue-300 w-1/4 rounded-lg hover:bg-blue-500;
 }
 
 .map {

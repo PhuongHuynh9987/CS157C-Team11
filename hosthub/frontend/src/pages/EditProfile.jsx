@@ -7,9 +7,10 @@ export default function EditProfile(){
     const {user,ready,isHost} = useContext(UserContext);
     const [uploading, setUploadingAction] = useState(false);
     const checkBox = ['Freshman', 'Sophormore', 'Junior','Senior','Exchange Student', 'Graduate']
+    const [status, setStatus] = useState('');
+    const [gender, setGender] = useState('');
     const [uploadedPhoto, setUploadedPhoto] = useState('');
     const [redirect, setRedirect] = useState('')
-
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -25,8 +26,10 @@ export default function EditProfile(){
             setFirstName(data.firstName),
             setLastName(data.lastName),
             setEmail(data.email),
-            setProfilePhoto(data.profilePhoto)
-            setDesc(data.desc)
+            setProfilePhoto(data.profilePhoto),
+            setDesc(data.desc),
+            setStatus(data.status),
+            setGender(data.gender)
         })
     },[])
 
@@ -66,6 +69,8 @@ export default function EditProfile(){
                     email,
                     uploadedPhoto:profilePhoto,
                     desc,
+                    gender,
+                    status,
                 });
                 setRedirect(true);
             }
@@ -77,6 +82,8 @@ export default function EditProfile(){
                     email,
                     uploadedPhoto,
                     desc,
+                    gender,
+                    status
                 });
                 setRedirect(true);
             }
@@ -89,9 +96,9 @@ export default function EditProfile(){
 
    if (redirect){
     return <Navigate to ={'/account/profile'} />
-}
+    }
 
-    
+    console.log(gender)
     return (
         <div className="mb-20">
             <h1 className="text-center font-semibold text-3xl text-yellow-400 mb-5">Editing My Profile</h1>
@@ -145,15 +152,34 @@ export default function EditProfile(){
                             className="px-5" />
                 </div>
 
+                <h2 className="text-2xl mt-4">Gender</h2> 
+                <div className="flex gap-2">
+                    <input type="checkbox"
+                        value = "Female"
+                        onChange={e=> setGender(e.target.value)}
+                        checked = {gender === "Female"}/>
+                    <label for="Female">Female</label>
+                    <input type="checkbox"
+                        value = "Male"
+                        onChange={e=> setGender(e.target.value)}
+                        checked = {gender === "Male"}/>
+                    <label for="Male">Male</label>
+                </div>
+                
                 <h2 className="text-2xl mt-4">Student Status</h2> 
-                {/* <div className="flex gap-7 my-2">
-                    {checkBox.map((option, key)=> (
-                        <label className="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" value = {option} key = {key}/>
-                        <span>{option}</span>
-                    </label>
+                <div className="flex gap-4">
+                {checkBox.map( item => (
+                       <div className="flex gap-2">
+                            <input type="checkbox" 
+                                value = {item} 
+                                onChange = {e=> setStatus(e.target.value)} 
+                                checked = {status === item}
+                                />
+                            <label for={item}>{item}</label>
+                        </div>
                     ))}
-                </div> */}
+                </div>
+                   
 
                 <h2 className="text-2xl mt-4">About Me</h2>
                 <textarea className="p-2" 
@@ -162,31 +188,6 @@ export default function EditProfile(){
                         onChange={e=>setDesc(e.target.value)}
                         placeholder="Let the host learn more about you!" />
 
-                {/* <h2 className="text-2xl mt-4">Photos</h2>
-                <p className="text-gray-400 w-56">more = better</p>
-
-                <div className="flex items-center gap-4">
-                    <input className="p-2" 
-                            type="text" 
-                            value = {photoLink}
-                            onChange={e=>setPhotoLink(e.target.value)}
-                            placeholder="Addding a photo using a link" />
-                    <button onClick={addPhotoByLink} className="secondary h-10 text-white">Add photo</button>
-                </div>
-                <div className="grid grid-cols-4">
-                    {uploadedPhotos.length >0 && uploadedPhotos.map(link => (
-                        <img src ={''} alt="" />
-                    ))}
-                    <label className="border border-blue-100 p-16 rounded-2xl my-2 flex items-center justify-center gap-6 cursor-pointer">
-                        <input type="file" className="hidden" />
-                        <div className="w-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                            </svg> 
-                        </div>
-                        <h2 className="w-2">Upload</h2>
-                    </label>
-                </div> */}
                  <button className="primary my-16">Update</button>
             </form>
            

@@ -20,6 +20,7 @@ class Host(JsonModel):
     cityStateZip: str
     uploadedPhotos: Optional[list]
     perks: Optional[list]
+        
 
 
 # host = Host(

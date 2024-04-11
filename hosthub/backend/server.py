@@ -129,11 +129,13 @@ def profile():
         if (len(list(hostData)) == 0):
             return  {"username":userData[0].username,"firstName": userData[0].firstName,
                         "lastName": userData[0].lastName, "id":userData[0].pk, 
-                        "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc}
+                        "email":userData[0].email, "profilePhoto": userData[0].profilePhoto,
+                        "desc": userData[0].desc,"gender": userData[0].gender,"status": userData[0].status}
         else:
             return  {"username":userData[0].username,"firstName": userData[0].firstName,
                     "lastName": userData[0].lastName, "id":userData[0].pk,"hostId":hostData[0].pk,
-                    "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc}
+                    "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, 
+                    "desc": userData[0].desc,"gender": userData[0].gender,"status": userData[0].status}
 
 @app.route("/updateProfile", methods = ["PUT"])
 def update_profile():
@@ -149,7 +151,9 @@ def update_profile():
             email = input["email"],
             profilePhoto = input["uploadedPhoto"],
             desc = input["desc"],
-            password = hostData[0].password
+            password = hostData[0].password,
+            gender = input["gender"],
+            status = input["status"],
         )
         person.save()
         return {"user_id": person.pk}
@@ -230,7 +234,7 @@ def individual_host_info():
     hostData = Host.Host.find(Host.Host.pk == input["id"]) 
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "addressNumber":hostData[0].addressNumber,
                "addressStreet": hostData[0].addressStreet,"cityStateZip":hostData[0].cityStateZip, 
-                "uploadedPhotos": hostData[0].uploadedPhotos, 'title':hostData[0].title}
+                "uploadedPhotos": hostData[0].uploadedPhotos, 'title':hostData[0].title,'perks': hostData[0].perks}
 
 
 @app.route('/uploads/<path:filename>', methods = ["GET"])
