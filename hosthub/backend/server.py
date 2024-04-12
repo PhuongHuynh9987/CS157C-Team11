@@ -2,7 +2,8 @@ from flask import Flask, jsonify, request, redirect, url_for,send_from_directory
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 import redis
-from Models import User, Booking, Host
+from Models import User
+from Models import Host
 from pydantic import ValidationError
 from redis_om import Migrator
 from flask_jwt_extended import create_access_token
@@ -21,6 +22,8 @@ from flask import current_app
 import json
 
 # from redis.cluster import RedisCluster
+
+
 
 r = redis.Redis(host = 'localhost', port = 6379, decode_responses = True, db=0)
 # r = redis.Redis(host='redis-13404.c14.us-east-1-2.ec2.cloud.redislabs.com', 
@@ -58,18 +61,12 @@ CORS(app, origins = ['http://localhost:5173'],supports_credentials = True )
 def members():
     return 'localhost:5000'+pathName+'1711999951.jpg'
 
-# register a user account
+
 @app.route("/register",methods = ["POST"])
 def register():
     input =  request.get_json()
-    if not input:
-        return "Bad Request", 400
-
-    # Check for pre-existing account here
-
     pw_hash = bcrypt.generate_password_hash(input["password"],5).decode('utf-8')
     try: 
-        print(input["username"])
         person = User.User(
             username = input["username"],
             firstName =  input["firstName"],
@@ -83,15 +80,11 @@ def register():
     except ValidationError as e:
         print(e)
 
-# log into user account
 @app.route("/login",methods = ["POST"])
 def login():
     input =  request.get_json()
     userData = User.User.find(User.User.username == input["username"])
-    
-    if not userData:
-     return ("No user found",404)
-
+   
     if len(list(userData)) != 0:
         user = userData[0]
         hostData = Host.Host.find(Host.Host.owner == user.pk)
@@ -104,27 +97,23 @@ def login():
                 response = jsonify({"username":userData[0].username,
                                     "firstName": userData[0].firstName,"lastName": userData[0].lastName,
                                      "id":userData[0].pk,"email":userData[0].email, 
-                                     "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc,
-                                     "history":redis.execute_command(f"lrange history_{user.pk} 0 -1")})
+                                     "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc})
             else:
                 response = jsonify({"username":userData[0].username,"firstName": userData[0].firstName,
                                     "lastName": userData[0].lastName, "id":userData[0].pk,"hostId":hostData[0].pk,
-                                    "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc,
-                                    "history":redis.execute_command(f"lrange history_{user.pk} 0 -1")})
+                                    "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc})
             access_token = create_access_token(identity=user.pk)
             set_access_cookies(response,access_token)
             return response
     else: 
         return "user not found"
 
-# log out of user account
 @app.route("/logout", methods = ["POST"] )
 def logout():
     response = jsonify({'logout': True})
     unset_jwt_cookies(response)
     return response
 
-# view profile details
 @app.route("/profile",methods = ["GET"])
 @jwt_required()
 def profile():
@@ -146,7 +135,6 @@ def profile():
                     "lastName": userData[0].lastName, "id":userData[0].pk,"hostId":hostData[0].pk,
                     "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc}
 
-# update profile details
 @app.route("/updateProfile", methods = ["PUT"])
 def update_profile():
     input = request.get_json()
@@ -169,7 +157,7 @@ def update_profile():
     except ValidationError as e:
         print(e)
     
-# create new hosting
+
 @app.route("/host",methods = ["POST"])
 def hosting():
     input = request.get_json()
@@ -178,12 +166,11 @@ def hosting():
             owner = input["id"],
             title = input["title"],
             desc = input["desc"],
-            address = input["address"],
-            city =  input["city"],
-            state =  input["state"],
-            zip = input["zip"],
+            addressNumber = input["addressNumber"],
+            addressStreet =  input["addressStreet"],
+            cityStateZip = input["cityStateZip"],
             uploadedPhotos = input["uploadedPhotos"],
-            perks = input["perks"],
+            perks = input["perks"]
         )
         # host.save()
         return {"host_id": host.pk}
@@ -191,7 +178,6 @@ def hosting():
     except ValidationError as e:
         print(e)
 
-# update hosting details
 @app.route("/host",methods = ["PUT"])
 def hosting_update():   
     input = request.get_json()
@@ -206,12 +192,11 @@ def hosting_update():
             owner = input["id"],
             title = input["title"],
             desc = input["desc"],
-            address = input["address"],
-            city =  input["city"],
-            state =  input["state"],
-            zip = input["zip"],
+            addressNumber = input["addressNumber"],
+            addressStreet =  input["addressStreet"],
+            cityStateZip = input["cityStateZip"],
             uploadedPhotos = input["uploadedPhotos"],
-            perks = input["perks"],
+            perks = input["perks"]
         )
         host.save()
         return {"host_id": host.pk}
@@ -219,7 +204,7 @@ def hosting_update():
     except ValidationError as e:
             print(e)
 
-# see all hostings
+
 @app.route('/fetch_allHost', methods = ["GET"])
 def fetch_allHost():
     hosts = Host.Host.find().all()
@@ -228,86 +213,25 @@ def fetch_allHost():
         host_list.append(dict(i))
     return host_list
 
-# see hosting info
+   
 @app.route('/hostingInfo', methods = ["GET"])
 def get_hosting_info():
     verify = verify_jwt_in_request()
     current_user = get_jwt_identity()
     hostData = Host.Host.find(Host.Host.owner == current_user) 
-    return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
-               "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
+    return {"id": hostData[0].pk,"desc": hostData[0].desc, "addressNumber":hostData[0].addressNumber,
+               "addressStreet": hostData[0].addressStreet,"cityStateZip":hostData[0].cityStateZip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, "available":redis.execute_command(f"smembers available_{hostData.pk}")}
+                'title':hostData[0].title, 'perks': hostData[0].perks}
 
 @app.route('/hostingInfo', methods = ["POST"])
 def individual_host_info():
     input = request.get_json()
     hostData = Host.Host.find(Host.Host.pk == input["id"]) 
-    return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
-               "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
-                "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, "available":redis.execute_command(f"smembers available_{hostData.pk}")}
+    return {"id": hostData[0].pk,"desc": hostData[0].desc, "addressNumber":hostData[0].addressNumber,
+               "addressStreet": hostData[0].addressStreet,"cityStateZip":hostData[0].cityStateZip, 
+                "uploadedPhotos": hostData[0].uploadedPhotos, 'title':hostData[0].title}
 
-# add a potential booking to user cart
-@app.route('/addToCart', methods = ["POST"])
-def add_cart():
-    current_user = get_jwt_identity()
-    id = current_user.pk
-
-    # check for cart hash by user id
-    cart_status = redis.execute_command(f"EXISTS cart_{id}")
-
-    # take host id and available
-    input = request.get_json()
-
-    if cart_status:
-        return ("Cart already occupied.")
-    else:
-        host_id = input["host_id"]
-        available = input["available"]
-        redis.execute_command(f"hmset cart_{id} host_id {host_id} available {available}")
-
-# empty the user's cart
-@app.route("/clearCart", methods = ["POST"])
-def clear_cart():
-    current_user = get_jwt_identity()
-    id = current_user.pk
-    redis.execute_command(f"delete cart_{id}")
-    return("Cart emptied.")
-
-# execute booking
-@app.route('/book', methods = ["POST"])
-def make_booking():
-    current_user = get_jwt_identity()
-    id = current_user.pk
-    # check for cart hash by user id
-    cart_status = redis.execute_command(f"EXISTS cart_{id}")
-
-    if cart_status:
-        try:
-            host_id = redis.execute_command(f"hget cart_{id} host_id")
-            date = redis.execute_command(f"hget cart_{id} available")
-
-            # create booking
-            booking = Booking.Booking(
-                user = id,
-                host = host_id,
-                available = date
-            )
-            booking.save()
-
-            # add booking to history for user and host+ remove from available
-            try: 
-                redis.execute_command(f"lpush history_{id} {booking.pk}")
-                redis.execute_command(f"lpush history_{host_id} {booking.pk}")
-                # remove from available here
-                return("Booking complete")
-            except Exception as e:
-                print(e)
-
-        except Exception as e:
-            print(e)
-    return ("Booking failed")
 
 @app.route('/uploads/<path:filename>', methods = ["GET"])
 def photoDisplay(filename):
