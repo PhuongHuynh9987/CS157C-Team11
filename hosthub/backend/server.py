@@ -22,8 +22,6 @@ import json
 
 # from redis.cluster import RedisCluster
 
-
-
 r = redis.Redis(host = 'localhost', port = 6379, decode_responses = True, db=0)
 # r = redis.Redis(host='redis-13404.c14.us-east-1-2.ec2.cloud.redislabs.com', 
             # port=13404, db=0, password="n3pRbBl2Y9oMdJ7J36QTPHzJBPPSAaQQ")
@@ -60,7 +58,7 @@ CORS(app, origins = ['http://localhost:5173'],supports_credentials = True )
 def members():
     return 'localhost:5000'+pathName+'1711999951.jpg'
 
-
+# register a user account
 @app.route("/register",methods = ["POST"])
 def register():
     input =  request.get_json()
@@ -85,6 +83,7 @@ def register():
     except ValidationError as e:
         print(e)
 
+# log into user account
 @app.route("/login",methods = ["POST"])
 def login():
     input =  request.get_json()
@@ -118,12 +117,14 @@ def login():
     else: 
         return "user not found"
 
+# log out of user account
 @app.route("/logout", methods = ["POST"] )
 def logout():
     response = jsonify({'logout': True})
     unset_jwt_cookies(response)
     return response
 
+# view profile details
 @app.route("/profile",methods = ["GET"])
 @jwt_required()
 def profile():
@@ -145,6 +146,7 @@ def profile():
                     "lastName": userData[0].lastName, "id":userData[0].pk,"hostId":hostData[0].pk,
                     "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc}
 
+# update profile details
 @app.route("/updateProfile", methods = ["PUT"])
 def update_profile():
     input = request.get_json()
@@ -167,7 +169,7 @@ def update_profile():
     except ValidationError as e:
         print(e)
     
-
+# create new hosting
 @app.route("/host",methods = ["POST"])
 def hosting():
     input = request.get_json()
@@ -189,6 +191,7 @@ def hosting():
     except ValidationError as e:
         print(e)
 
+# update hosting details
 @app.route("/host",methods = ["PUT"])
 def hosting_update():   
     input = request.get_json()
@@ -216,7 +219,7 @@ def hosting_update():
     except ValidationError as e:
             print(e)
 
-
+# see all hostings
 @app.route('/fetch_allHost', methods = ["GET"])
 def fetch_allHost():
     hosts = Host.Host.find().all()
@@ -225,7 +228,7 @@ def fetch_allHost():
         host_list.append(dict(i))
     return host_list
 
-   
+# see hosting info
 @app.route('/hostingInfo', methods = ["GET"])
 def get_hosting_info():
     verify = verify_jwt_in_request()
@@ -234,7 +237,7 @@ def get_hosting_info():
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, "available":redis.execute_command(f"lrange available_{hostData.pk} 0 -1")}
+                'title':hostData[0].title, 'perks': hostData[0].perks, "available":redis.execute_command(f"smembers available_{hostData.pk}")}
 
 @app.route('/hostingInfo', methods = ["POST"])
 def individual_host_info():
@@ -243,9 +246,9 @@ def individual_host_info():
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, "available":redis.execute_command(f"lrange available_{hostData.pk} 0 -1")}
+                'title':hostData[0].title, 'perks': hostData[0].perks, "available":redis.execute_command(f"smembers available_{hostData.pk}")}
 
-
+# add a potential booking to user cart
 @app.route('/addToCart', methods = ["POST"])
 def add_cart():
     current_user = get_jwt_identity()
@@ -260,8 +263,11 @@ def add_cart():
     if cart_status:
         return ("Cart already occupied.")
     else:
-        redis.execute_command(f"hmset cart_{id} host_id {input["host_id"]} available {input["available"]}")
+        host_id = input["host_id"]
+        available = input["available"]
+        redis.execute_command(f"hmset cart_{id} host_id {host_id} available {available}")
 
+# empty the user's cart
 @app.route("/clearCart", methods = ["POST"])
 def clear_cart():
     current_user = get_jwt_identity()
@@ -302,8 +308,6 @@ def make_booking():
         except Exception as e:
             print(e)
     return ("Booking failed")
-
-
 
 @app.route('/uploads/<path:filename>', methods = ["GET"])
 def photoDisplay(filename):
