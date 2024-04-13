@@ -14,9 +14,11 @@ export default function IndexPage (){
     const [allHosts, setAllHosts] = useState([])
 
 
+    // const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
+    // "Kitchen Access", "Private Bedroom", "Pets allowed"]
+    const icons = [truckPlane, truckPlane, groceries, kitchen, bed, pets]
     const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
     "Kitchen Access", "Private Bedroom", "Pets allowed"]
-    const icons = [truckPlane, truckPlane, groceries, kitchen, bed, pets]
 
     useEffect(()=> {
         axios.get('/fetch_allHost').then(({data}) => {
@@ -49,7 +51,7 @@ export default function IndexPage (){
                                         <div className="flex justify-between px-2">
                                             <div className="flex items-center gap-3">
                                                 {host.perks && host.perks.map((perk,key)=>(
-                                                    <img className="w-7" src={icons[perkList.indexOf(perk)]} key={key} alt="" />
+                                                    <img className="w-7" src={icons[key]} alt="" />
                                                 ))}
                                                
                                             </div>
@@ -60,7 +62,7 @@ export default function IndexPage (){
                                 </Link>
                             ))}
                         </div>
-    
+                
                         <div className="sticky">                
                             <Map />
                         </div>

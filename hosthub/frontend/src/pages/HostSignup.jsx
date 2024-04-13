@@ -11,9 +11,10 @@ import { Navigate } from "react-router-dom";
 export default function HostSignUp(){
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
-    const [addressNumber, setAddressNumber] = useState('');
-    const [addressStreet, setAddressStreet] = useState('');
-    const [cityStateZip, setCityStateZip] = useState('');
+    const [address, setAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zip, setZip] = useState('');
     const [photoLink, setPhotoLink] = useState([]);
     const [uploadedPhotos, setUploadedPhotos] = useState([]);
     const [uploadFailure, setUploadFailure] = useState('');
@@ -40,11 +41,12 @@ export default function HostSignUp(){
     useEffect(()=> {
         axios.get('/hostingInfo').then(({data}) => {
             setTitle(data.title)
-            setAddressNumber(data.addressNumber)
-            setAddressStreet(data.addressStreet)
+            setAddress(data.address)
+            setCity(data.city)
+            setState(data.state)
+            setZip(data.zip)
             setUploadedPhotos(data.uploadedPhotos)
             setDesc(data.desc)
-            setCityStateZip(data.cityStateZip)
             setPerks(data.perks)
         })
 
@@ -56,16 +58,16 @@ export default function HostSignUp(){
         const id = user.id;
         if(!isHost)
             try {
-                console.log(perks)
                 await axios.post('/host', {
                     id,
                     title,
                     desc,
-                    addressNumber,
-                    addressStreet,
-                    cityStateZip,
-                    uploadedPhotos,
-                    perks
+                    address,
+                    city,
+                    state,
+                    zip,
+                    perks,
+                    uploadedPhotos
                 })
                 setRedirect(true);
             }
@@ -75,14 +77,14 @@ export default function HostSignUp(){
 
         else {
             try {
-                console.log(perks)
                 await axios.put('/host', {
                     id,
                     title,
                     desc,
-                    addressNumber,
-                    addressStreet,
-                    cityStateZip,
+                    address,
+                    city,
+                    state,
+                    zip,
                     uploadedPhotos,
                     perks
                 })
@@ -164,29 +166,38 @@ export default function HostSignUp(){
 
                 <h2 className="text-2xl mt-4">Address</h2>
                 <div className="flex gap-3 justify-center items-center">
-                    <p className="text-gray-400 w-56">Number: </p>
+                    <p className="text-gray-400 w-56">Address: </p>
                     <input className="p-2" 
                             type="text"
-                            value = {addressNumber} 
-                            onChange={e=>setAddressNumber(e.target.value)}
-                            placeholder="example: 1112" />
+                            value = {address} 
+                            onChange={e=>setAddress(e.target.value)}
+                            placeholder="example: 1112 12th Street" />
                 </div>
                 <div className="flex gap-3 justify-center items-center">
-                    <p className="text-gray-400 w-56">Street: </p>
+                    <p className="text-gray-400 w-56">City: </p>
                     <input className="p-2" 
                             type="text"
-                            value = {addressStreet}
-                            onChange={e=>setAddressStreet(e.target.value)}
-                            placeholder="example: 12th Street" />
+                            value = {city}
+                            onChange={e=>setCity(e.target.value)}
+                            placeholder="example: San Jose" />
                 </div>
 
                 <div className="flex gap-3 justify-center items-center">
-                    <p className="text-gray-400 w-56">City, State, and Zip Code </p>
+                    <p className="text-gray-400 w-56">State </p>
                     <input className="p-2"
                             type="text"
-                            value = {cityStateZip}
-                            onChange={e=>setCityStateZip(e.target.value)}
-                            placeholder="example: San Jose, CA, 93451" />
+                            value = {state}
+                            onChange={e=>setState(e.target.value)}
+                            placeholder="example: CA" />
+                </div>
+
+                <div className="flex gap-3 justify-center items-center">
+                    <p className="text-gray-400 w-56">Zipcode: </p>
+                    <input className="p-2"
+                            type="text"
+                            value = {zip}
+                            onChange={e=>setZip(e.target.value)}
+                            placeholder="example: 94531" />
                 </div>
 
                 <h2 className="text-2xl mt-4">Photos</h2>
