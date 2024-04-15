@@ -15,4 +15,4 @@ class User(JsonModel):
     profilePhoto: Optional[str]
     gender: Optional[str]
     status: Optional[str]
-    bookingHistory: list
+    bookingHistory: Optional[list]
