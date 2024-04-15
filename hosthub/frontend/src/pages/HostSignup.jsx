@@ -11,14 +11,18 @@ import { Navigate } from "react-router-dom";
 export default function HostSignUp(){
     const [title, setTitle] = useState('');
     const [desc, setDesc] = useState('');
-    const [addressNumber, setAddressNumber] = useState('');
-    const [addressStreet, setAddressStreet] = useState('');
-    const [cityStateZip, setCityStateZip] = useState('');
+    const [address, setAddress] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zip, setZip] = useState('');
     const [photoLink, setPhotoLink] = useState([]);
     const [uploadedPhotos, setUploadedPhotos] = useState([]);
     const [uploadFailure, setUploadFailure] = useState('');
     const [perks, setPerks] = useState([]);
     const [redirect, setRedirect] = useState('')
+    const [fromDate, setFromDate] = useState('')
+    const [toDate, setToDate] = useState('')
+    const [availability, setAvailability] = useState(false);
     const {user,ready,isHost} = useContext(UserContext);
     
 
@@ -28,17 +32,21 @@ export default function HostSignUp(){
 
     const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
                     "Kitchen Access", "Private Bedroom", "Pets allowed"]
-
     const icons = [truckPlane, truckPlane, groceries, kitchen, bed, pets]
+
+    if (perks === null) {
+        setPerks([])
+    }
 
     useEffect(()=> {
         axios.get('/hostingInfo').then(({data}) => {
             setTitle(data.title)
-            setAddressNumber(data.addressNumber)
-            setAddressStreet(data.addressStreet)
+            setAddress(data.address)
+            setCity(data.city)
+            setState(data.state)
+            setZip(data.zip)
             setUploadedPhotos(data.uploadedPhotos)
             setDesc(data.desc)
-            setCityStateZip(data.cityStateZip)
             setPerks(data.perks)
         })
 
@@ -50,16 +58,16 @@ export default function HostSignUp(){
         const id = user.id;
         if(!isHost)
             try {
-                console.log(perks)
                 await axios.post('/host', {
                     id,
                     title,
                     desc,
-                    addressNumber,
-                    addressStreet,
-                    cityStateZip,
-                    uploadedPhotos,
-                    perks
+                    address,
+                    city,
+                    state,
+                    zip,
+                    perks,
+                    uploadedPhotos
                 })
                 setRedirect(true);
             }
@@ -69,14 +77,14 @@ export default function HostSignUp(){
 
         else {
             try {
-                console.log(perks)
                 await axios.put('/host', {
                     id,
                     title,
                     desc,
-                    addressNumber,
-                    addressStreet,
-                    cityStateZip,
+                    address,
+                    city,
+                    state,
+                    zip,
                     uploadedPhotos,
                     perks
                 })
@@ -124,14 +132,16 @@ export default function HostSignUp(){
     }
 
     function updatePerks(ev){
-        console.log(ev.target.checked)
         if (ev.target.checked)
             setPerks([...perks, ev.target.value])
         else {
             setPerks(perks.filter((item) => item !== ev.target.value));
             }
-  
-       
+    }
+
+    function showCalenda(ev){
+        ev.preventDefault();
+        setAvailability(true)
     }
 
     return (
@@ -156,29 +166,38 @@ export default function HostSignUp(){
 
                 <h2 className="text-2xl mt-4">Address</h2>
                 <div className="flex gap-3 justify-center items-center">
-                    <p className="text-gray-400 w-56">Number: </p>
+                    <p className="text-gray-400 w-56">Address: </p>
                     <input className="p-2" 
                             type="text"
-                            value = {addressNumber} 
-                            onChange={e=>setAddressNumber(e.target.value)}
-                            placeholder="example: 1112" />
+                            value = {address} 
+                            onChange={e=>setAddress(e.target.value)}
+                            placeholder="example: 1112 12th Street" />
                 </div>
                 <div className="flex gap-3 justify-center items-center">
-                    <p className="text-gray-400 w-56">Street: </p>
+                    <p className="text-gray-400 w-56">City: </p>
                     <input className="p-2" 
                             type="text"
-                            value = {addressStreet}
-                            onChange={e=>setAddressStreet(e.target.value)}
-                            placeholder="example: 12th Street" />
+                            value = {city}
+                            onChange={e=>setCity(e.target.value)}
+                            placeholder="example: San Jose" />
                 </div>
 
                 <div className="flex gap-3 justify-center items-center">
-                    <p className="text-gray-400 w-56">City, State, and Zip Code </p>
+                    <p className="text-gray-400 w-56">State </p>
                     <input className="p-2"
                             type="text"
-                            value = {cityStateZip}
-                            onChange={e=>setCityStateZip(e.target.value)}
-                            placeholder="example: San Jose, CA, 93451" />
+                            value = {state}
+                            onChange={e=>setState(e.target.value)}
+                            placeholder="example: CA" />
+                </div>
+
+                <div className="flex gap-3 justify-center items-center">
+                    <p className="text-gray-400 w-56">Zipcode: </p>
+                    <input className="p-2"
+                            type="text"
+                            value = {zip}
+                            onChange={e=>setZip(e.target.value)}
+                            placeholder="example: 94531" />
                 </div>
 
                 <h2 className="text-2xl mt-4">Photos</h2>
@@ -216,28 +235,41 @@ export default function HostSignUp(){
                 <h2 className="font-medium text-2xl mt-4">Services</h2>
                 <p className="text-gray-400 w-full">Select services that you provide</p>
                 <div className="grid grid-cols-3 gap-5 mt-5 lg:grid-cols-4">
-                    {perkList.map((perk,key) => (
+                    { perkList.map((perk,key) => (
                         <label className="flex items-center gap-3 cursor-pointer"  key ={key} >   
-                        {perks.includes(perk) && (
-                           <div>
-                                <input type="checkbox" checked value = {perk} onChange={updatePerks} />
-                                <img className="w-7" src={icons[key]} alt="" />
-                                <span>{perk}</span>
-                           </div>
-                        )} 
+                            {perks.includes(perk) && (
+                            <div>
+                                    <input type="checkbox" checked value = {perk} onChange={updatePerks} />
+                                    <img className="w-7" src={icons[key]} alt="" />
+                                    <span>{perk}</span>
+                            </div>
+                            )} 
 
-                        {!perks.includes(perk) && (
-                           <div>
-                                <input type="checkbox" value = {perk} onChange={updatePerks} />
-                                <img className="w-7" src={icons[key]}  alt="" />
-                                <span>{perk}</span>
-                           </div>
-                        )} 
-                       
-                    </label>
-                    ))}                   
+                            {!perks.includes(perk) && (
+                            <div>
+                                    <input type="checkbox" value = {perk} onChange={updatePerks} />
+                                    <img className="w-7" src={icons[key]}  alt="" />
+                                    <span>{perk}</span>
+                            </div>
+                            )} 
+                        </label>
+                    ))} 
                 </div>
+
+                <h2 className="font-medium text-2xl my-4">Availability</h2>
+                {availability && (
+                    <div className="flex gap-10">
+                        <input type="date" value = {fromDate} onChange={ev => setFromDate(ev.target.value)}/>
+                        <input type="date" value = {toDate} onChange={ev => setToDate(ev.target.value)}/>
+                        <button onClick={ev=> setAvailability(false)}>Add</button>
+                    </div>
+                    
+                )}
+                {!availability &&(
+                    <button className="secondary h-10 text-white my-5" onClick={showCalenda}>Add a time length</button>
+                )}
                 <button className="primary my-16">Save</button>
+
             </form>
         </div>
     )

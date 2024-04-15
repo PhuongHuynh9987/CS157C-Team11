@@ -8,8 +8,13 @@ import axios from "axios";
 
 export default function Header(){
   const [showList, setShowList] = useState(false);
+  const [fromDate, setFromDate] = useState('')
+  const [toDate, setToDate] = useState('')
   const [redirect, setRedirect] = useState(false)
   const {user,setUser,setIsHost} = useContext(UserContext)
+
+  const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
+  "Kitchen Access", "Private Bedroom", "Pets allowed"]
 
   const showDone = () => {
     if(showList === false) setShowList(true);
@@ -41,6 +46,10 @@ export default function Header(){
     <Navigate to={'/login'} />
   }
 
+  function searching(){
+
+  }
+
     return (
         <div className="h-28" ref ={screen} onClick={removeToggle}>
           <header className="flex items-center justify-between gap-6 mx-4" >
@@ -53,16 +62,13 @@ export default function Header(){
             </div>
             <div className="border border-2 border-blue-100 shadow-xl w-full rounded-full flex items-center justify-round gap-5">
               {/* <input className="shadow-xl lg:w-11/12 md:w-10/12 sm:w-9/12 rounded-l-full p-4" type="text" placeholder="search for a host" > */}
-              <form className="flex gap-1 justify-start text-left w-full m-0">
-                <input type="date"/>
-                <input type="date"/>
-                <div className="w-full">
+              <form onSubmit={searching} className="flex gap-1 justify-start text-left w-full m-0">
+                <input type="date" value = {fromDate} onChange={ev => setFromDate(ev.target.value)}/>
+                <input type="date" value = {toDate} onChange={ev => setToDate(ev.target.value)}/>
+                <div className="w-full ">
                   <Multiselect isObject={false} placeholder="any"  
-                            className="multiselect "
-                            options={["Airport Pickup",
-                                    'Airport Dropoff',
-                                    'Kitchen Access',
-                                    'Groceries provided']} 
+                            className="multiselect"
+                            options={perkList} 
                         showCheckbox  />   
                 </div> 
             </form>
@@ -82,11 +88,18 @@ export default function Header(){
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-yellow-400">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
               </svg>
-              <div className="">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-yellow-400">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                </svg>
-              </div>
+
+              {!user?.profilePhoto && (
+                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-yellow-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                 </svg> 
+                )}
+                {user?.profilePhoto && (
+                <div className="w-9">
+                  <img className="aspect-square object-cover rounded-full" src ={'http://localhost:5000/uploads/'+user.profilePhoto} alt=""/>
+                </div>
+                )}
+            
             {user && (
               <div className="">
                 <h1 className="font-semibold text-blue-400">{user.firstName}</h1>

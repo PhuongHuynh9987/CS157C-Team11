@@ -21,14 +21,13 @@ export function UserContextProvider({children}){
 
                 if (data.hostId != undefined){
                     setIsHost(true) 
-                    // console.log(isHost)
                 }
             })    
         }
     },[])
 
     return (
-        <UserContext.Provider value = {{user, setUser,ready,isHost,setIsHost}}>
+        <UserContext.Provider value = {{user, setUser,ready,isHost,setIsHost, setReady}}>
             {children}
         </UserContext.Provider>
     )
