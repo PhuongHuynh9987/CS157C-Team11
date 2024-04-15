@@ -36,6 +36,7 @@ class Host(JsonModel):
 # host.save()
 
 # host = Host.find().all()
+# print(host)
 # host_list = []
 # for i in host:
 #     # print(dict(i))
