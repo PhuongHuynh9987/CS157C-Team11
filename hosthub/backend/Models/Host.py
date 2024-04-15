@@ -15,9 +15,10 @@ class Host(JsonModel):
     owner: str = Field(index=True)
     title: str
     desc: str
-    addressNumber: str
-    addressStreet: str
-    cityStateZip: str
+    address: str
+    city: str
+    state: str
+    zip: str
     uploadedPhotos: Optional[list]
     perks: Optional[list]
         
