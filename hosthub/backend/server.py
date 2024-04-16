@@ -14,8 +14,11 @@ from flask_jwt_extended import unset_jwt_cookies
 from flask_jwt_extended import verify_jwt_in_request
 from flask_jwt_extended import current_user
 from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt
 import os
 from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
 from werkzeug.utils import secure_filename
 import requests
 from flask import current_app
@@ -40,6 +43,8 @@ jwt = JWTManager(app)
 app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies", "json", "query_string"]
 app.config["JWT_COOKIE_SECURE"] = False
 app.config["JWT_SECRET_KEY"] = "mySecret"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=0.01)
+
 
 # orginalPath = app.instance_path[0:-8]
 rootPath = app.root_path
@@ -58,8 +63,9 @@ CORS(app, origins = ['http://localhost:5173'],supports_credentials = True )
 
 # Api route
 @app.route("/",methods = ["GET"])
+@jwt_required()
 def members():
-    return 'localhost:5000'+pathName+'1711999951.jpg'
+    return {"exp":get_jwt()["exp"]}
 
 
 @app.route("/register",methods = ["POST"])
@@ -107,6 +113,13 @@ def login():
             return response
     else: 
         return "user not found"
+
+
+@app.route("/checkTokenExpiry",methods = ["GET"])
+@jwt_required()
+def chec_token_expiry():
+    return str(get_jwt()["exp"])
+
 
 @app.route("/logout", methods = ["POST"] )
 def logout():

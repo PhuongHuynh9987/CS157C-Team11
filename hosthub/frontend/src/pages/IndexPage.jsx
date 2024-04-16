@@ -12,10 +12,6 @@ import pets from "../assets/pets.svg"
 export default function IndexPage (){
     // const {user,ready,isHost} = useContext(UserContext);
     const [allHosts, setAllHosts] = useState([])
-
-
-    // const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
-    // "Kitchen Access", "Private Bedroom", "Pets allowed"]
     const icons = [truckPlane, truckPlane, groceries, kitchen, bed, pets]
     const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
     "Kitchen Access", "Private Bedroom", "Pets allowed"]
