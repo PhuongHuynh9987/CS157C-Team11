@@ -238,18 +238,17 @@ def get_hosting_info():
     verify = verify_jwt_in_request()
     current_user = get_jwt_identity()
     hostData = Host.Host.find(Host.Host.owner == current_user) 
-    return {"id": hostData[0].pk,"desc": hostData[0].desc,
-               "address": hostData[0].address,"city":hostData[0].city,"state":hostData[0].state, 
-                "zip":hostData[0].zip, "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks}
+    return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
+               "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip,
+                "uploadedPhotos": hostData[0].uploadedPhotos, 'title':hostData[0].title}
                 
 
 @app.route('/hostingInfo', methods = ["POST"])
 def individual_host_info():
     input = request.get_json()
     hostData = Host.Host.find(Host.Host.pk == input["id"]) 
-    return {"id": hostData[0].pk,"desc": hostData[0].desc, "addressNumber":hostData[0].addressNumber,
-               "addressStreet": hostData[0].addressStreet,"cityStateZip":hostData[0].cityStateZip, 
+    return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
+               "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip,
                 "uploadedPhotos": hostData[0].uploadedPhotos, 'title':hostData[0].title}
 
 

@@ -235,13 +235,14 @@ export default function HostSignUp(){
                 <h2 className="font-medium text-2xl mt-4">Services</h2>
                 <p className="text-gray-400 w-full">Select services that you provide</p>
                 <div className="grid grid-cols-3 gap-5 mt-5 lg:grid-cols-4">
-                    { perkList.map((perk,key) => (
+                    {perkList.map((perk,key) => (
                         <label className="flex items-center gap-3 cursor-pointer"  key ={key} >   
                             {perks.includes(perk) && (
                             <div>
-                                    <input type="checkbox" checked value = {perk} onChange={updatePerks} />
-                                    <img className="w-7" src={icons[key]} alt="" />
-                                    <span>{perk}</span>
+                                
+                                <input type="checkbox" checked value = {perk} onChange={updatePerks} />
+                                <img className="w-7" src={icons[key]} alt="" />
+                                <span>{perk}</span>
                             </div>
                             )} 
 
@@ -261,7 +262,7 @@ export default function HostSignUp(){
                     <div className="flex gap-10">
                         <input type="date" value = {fromDate} onChange={ev => setFromDate(ev.target.value)}/>
                         <input type="date" value = {toDate} onChange={ev => setToDate(ev.target.value)}/>
-                        <button onClick={ev=> setAvailability(false)}>Add</button>
+                        <button className="secondary" onClick={ev=> setAvailability(false)}>Add</button>
                     </div>
                     
                 )}
@@ -269,7 +270,6 @@ export default function HostSignUp(){
                     <button className="secondary h-10 text-white my-5" onClick={showCalenda}>Add a time length</button>
                 )}
                 <button className="primary my-16">Save</button>
-
             </form>
         </div>
     )
