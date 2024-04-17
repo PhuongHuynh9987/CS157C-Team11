@@ -32,9 +32,7 @@
 ![DataModel](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/ada72308-055b-4988-82be-a4ebafe7097f)
 
 ### UX/UI
-
-![flow-diagram-Page-1 drawio](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/e4adae3f-0cdd-44b7-9a7c-3760664ee0fa)
-
+![UX-UI design](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/f8900799-79ca-4514-ad71-a76f9ad74729)
 
 ### Implementation:
 - Download python3 and redis-stack-server
