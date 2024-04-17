@@ -28,8 +28,9 @@
   - Availability (list?)
 - Cart
 - Review?
+![DataModel](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/c143dbe2-c64a-4776-b6a3-89e663d51d28)
 
-<img src="[https://your-image-url.type](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/ada72308-055b-4988-82be-a4ebafe7097f)" width="100" height="100">
+<img src="https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/c143dbe2-c64a-4776-b6a3-89e663d51d28" width="100" height="100">
 
 ### UX/UI
 
