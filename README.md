@@ -31,9 +31,7 @@
 <img src="https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/c143dbe2-c64a-4776-b6a3-89e663d51d28" width="500">
 
 ### UX/UI
-
-![UX-UI design](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/a33ea9c2-0922-41d0-b4a3-a8184b569916 )
-<img src="https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/a33ea9c2-0922-41d0-b4a3-a8184b569916" width="800">
+<img src="https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/a33ea9c2-0922-41d0-b4a3-a8184b569916" width="900">
 
 ### Implementation:
 - Download python3 and redis-stack-server
