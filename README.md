@@ -29,7 +29,7 @@
 - Cart
 - Review?
 
-![DataModel](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/ada72308-055b-4988-82be-a4ebafe7097f  | width=100)
+<img src="[https://your-image-url.type](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/ada72308-055b-4988-82be-a4ebafe7097f)" width="100" height="100">
 
 ### UX/UI
 
