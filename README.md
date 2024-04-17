@@ -32,7 +32,9 @@
 ![DataModel](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/ada72308-055b-4988-82be-a4ebafe7097f)
 
 ### UX/UI
-![UX-UI design](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/f8900799-79ca-4514-ad71-a76f9ad74729)
+
+![UX-UI design](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/a33ea9c2-0922-41d0-b4a3-a8184b569916)
+
 
 ### Implementation:
 - Download python3 and redis-stack-server
