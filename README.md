@@ -21,13 +21,20 @@
       - Teammates discussed on the Redis Data models
       - Elena will continue on implementing data models for Cart, Host's availability, and Booking History
       - Phuong will start working on drawing data model diagrams and report setup.  
-   
+
 ### Data Model:
 - User: JsonModel
 - Host: JsonModel
   - Availability (list?)
 - Cart
 - Review?
+
+![DataModel](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/ada72308-055b-4988-82be-a4ebafe7097f)
+
+### UX/UI
+
+![flow-diagram-Page-1 drawio](https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/e4adae3f-0cdd-44b7-9a7c-3760664ee0fa)
+
 
 ### Implementation:
 - Download python3 and redis-stack-server
