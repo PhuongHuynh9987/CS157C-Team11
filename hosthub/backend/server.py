@@ -4,7 +4,7 @@ import redis
 from Models import User, Booking, Host
 from pydantic import ValidationError
 from redis_om import Migrator
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import set_access_cookies
@@ -13,10 +13,10 @@ from flask_jwt_extended import verify_jwt_in_request
 from flask_jwt_extended import current_user
 from flask_jwt_extended import get_jwt_identity
 import os
-from datetime import datetime
+from datetime import datetime,timedelta,timezone
 from werkzeug.utils import secure_filename
 import requests
-from flask import Flask, current_app, jsonify, request
+from flask import Flask, current_app, jsonify, request, send_from_directory
 import json
 
 # from redis.cluster import RedisCluster
@@ -35,6 +35,7 @@ jwt = JWTManager(app)
 app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies", "json", "query_string"]
 app.config["JWT_COOKIE_SECURE"] = False
 app.config["JWT_SECRET_KEY"] = "mySecret"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=0.01)
 
 # orginalPath = app.instance_path[0:-8]
 rootPath = app.root_path
@@ -45,7 +46,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # print(pathName)
 app.config['STATIC_FOLDER'] = 'uploads'
-
 # print(app.config.get('STATIC_FOLDER'))
 ######### enable Cors
 # CORS(app, resources ={r'/*':{'origins': 'http://localhost:5173'},'supports_credentials': True})
@@ -57,6 +57,7 @@ def members():
     return 'localhost:5000'+pathName+'1711999951.jpg'
 
 # register a user account
+# user history will be a separate redis LIST in format history_{user_id}
 @app.route("/register",methods = ["POST"])
 def register():
     input =  request.get_json()
@@ -64,6 +65,9 @@ def register():
         return "Bad Request", 400
 
     # Check for pre-existing account here
+    userData = User.User.find(User.User.username == input["username"])
+    if (userData):
+        return ("Username already exists", 404)
 
     pw_hash = bcrypt.generate_password_hash(input["password"],5).decode('utf-8')
     try: 
@@ -85,9 +89,6 @@ def register():
 def login():
     input =  request.get_json()
     userData = User.User.find(User.User.username == input["username"])
-
-    if not userData:
-     return ("No user found",404)
 
     if len(list(userData)) != 0:
         user = userData[0]
@@ -113,6 +114,11 @@ def login():
     else: 
         return "user not found"
 
+@app.route("/checkTokenExpiry",methods = ["GET"])
+@jwt_required()
+def chec_token_expiry():
+    return str(get_jwt()["exp"])
+
 # log out of user account
 @app.route("/logout", methods = ["POST"] )
 def logout():
@@ -136,11 +142,13 @@ def profile():
         if (len(list(hostData)) == 0):
             return  {"username":userData[0].username,"firstName": userData[0].firstName,
                         "lastName": userData[0].lastName, "id":userData[0].pk, 
-                        "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc}
+                        "email":userData[0].email, "profilePhoto": userData[0].profilePhoto,
+                        "desc": userData[0].desc,"gender": userData[0].gender,"status": userData[0].status}
         else:
             return  {"username":userData[0].username,"firstName": userData[0].firstName,
                     "lastName": userData[0].lastName, "id":userData[0].pk,"hostId":hostData[0].pk,
-                    "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc}
+                    "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, 
+                    "desc": userData[0].desc,"gender": userData[0].gender,"status": userData[0].status}
 
 # update profile details
 @app.route("/updateProfile", methods = ["PUT"])
@@ -157,7 +165,9 @@ def update_profile():
             email = input["email"],
             profilePhoto = input["uploadedPhoto"],
             desc = input["desc"],
-            password = hostData[0].password
+            password = hostData[0].password,
+            gender = input["gender"],
+            status = input["status"]
         )
         person.save()
         return {"user_id": person.pk}
@@ -180,7 +190,7 @@ def hosting():
             uploadedPhotos = input["uploadedPhotos"],
             perks = input["perks"],
         )
-        # host.save()
+        host.save()
         return {"host_id": host.pk}
 
     except ValidationError as e:
@@ -208,6 +218,11 @@ def hosting_update():
             perks = input["perks"],
         )
         host.save()
+        # take input of availabilities and add to available_{host_id} set
+        available = input['available']
+
+        for str in available:
+            redis.execute_command(f'sadd available_{hostId} "{str}"')
         return {"host_id": host.pk}
 
     except ValidationError as e:
@@ -251,7 +266,7 @@ def add_cart():
     # check for cart hash by user id
     cart_status = redis.execute_command(f"EXISTS cart_{id}")
 
-    # take host id and available
+    # take host id and available time slot
     input = request.get_json()
 
     if cart_status:
@@ -259,7 +274,7 @@ def add_cart():
     else:
         host_id = input["host_id"]
         available = input["available"]
-        redis.execute_command(f"hmset cart_{id} host_id {host_id} available {available}")
+        redis.execute_command(f'hmset cart_{id} host_id "{host_id}" available "{available}"')
 
 # empty the user's cart
 @app.route("/clearCart", methods = ["POST"])
@@ -279,8 +294,8 @@ def make_booking():
 
     if cart_status:
         try:
-            host_id = redis.execute_command(f"hget cart_{id} host_id")
-            date = redis.execute_command(f"hget cart_{id} available")
+            host_id = redis.execute_command(f'hget cart_{id} host_id')
+            date = redis.execute_command(f'hget cart_{id} available')
 
             # create booking
             booking = Booking.Booking(
@@ -290,11 +305,13 @@ def make_booking():
             )
             booking.save()
 
-            # add booking to history for user and host+ remove from available
+            # add booking to history for user and host
             try: 
-                redis.execute_command(f"lpush history_{id} {booking.pk}")
-                redis.execute_command(f"lpush history_{host_id} {booking.pk}")
-                # remove from available here
+                redis.execute_command(f'lpush history_{id} "{booking.pk}"')
+                redis.execute_command(f'lpush history_{host_id} "{booking.pk}"')
+               
+                # remove from availabilities on booking
+                redis.execute_command(f'srem available_{host_id} "{date}"')
                 return("Booking complete")
             except Exception as e:
                 print(e)
@@ -305,4 +322,27 @@ def make_booking():
 
 @app.route('/uploads/<path:filename>', methods = ["GET"])
 def photoDisplay(filename):
-    return ## temporary
+    return send_from_directory(app.config.get('STATIC_FOLDER'), filename)
+
+@app.route("/upload-by-link",methods = ["POST"])
+def upload_file_url():
+    input =  request.get_json()
+    image_url = input['link']
+    data = requests.get(image_url).content
+    now = datetime.now()
+    timestamp = str(round(datetime.timestamp(now)))
+    filename = timestamp + '.jpg'
+    f = open(pathName+'/'+filename,'wb')
+    f.write(data)
+    f.close()
+    return filename
+
+
+@app.route('/upload', methods = ["POST"])
+def upload_file():
+    file = request.files['file']
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+    return file.filename
+
+if __name__ == "__main__":
+    app.run(debug=True, port = 5000, host = "localhost")
