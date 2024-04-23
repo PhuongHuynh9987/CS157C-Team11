@@ -261,10 +261,9 @@ def individual_host_info():
 @app.route('/addToCart', methods = ["POST"])
 def add_cart():
     current_user = get_jwt_identity()
-    id = current_user.pk
 
     # check for cart hash by user id
-    cart_status = redis.execute_command(f"EXISTS cart_{id}")
+    cart_status = redis.execute_command(f"EXISTS cart_{current_user}")
 
     # take host id and available time slot
     input = request.get_json()
@@ -274,32 +273,30 @@ def add_cart():
     else:
         host_id = input["host_id"]
         available = input["available"]
-        redis.execute_command(f'hmset cart_{id} host_id "{host_id}" available "{available}"')
+        redis.execute_command(f'hmset cart_{current_user} host_id "{host_id}" available "{available}"')
 
 # empty the user's cart
 @app.route("/clearCart", methods = ["POST"])
 def clear_cart():
     current_user = get_jwt_identity()
-    id = current_user.pk
-    redis.execute_command(f"delete cart_{id}")
+    redis.execute_command(f"delete cart_{current_user}")
     return("Cart emptied.")
 
 # execute booking
 @app.route('/book', methods = ["POST"])
 def make_booking():
     current_user = get_jwt_identity()
-    id = current_user.pk
     # check for cart hash by user id
-    cart_status = redis.execute_command(f"EXISTS cart_{id}")
+    cart_status = redis.execute_command(f"EXISTS cart_{current_user}")
 
     if cart_status:
         try:
-            host_id = redis.execute_command(f'hget cart_{id} host_id')
-            date = redis.execute_command(f'hget cart_{id} available')
+            host_id = redis.execute_command(f'hget cart_{current_user} host_id')
+            date = redis.execute_command(f'hget cart_{current_user} available')
 
             # create booking
             booking = Booking.Booking(
-                user = id,
+                user = current_user,
                 host = host_id,
                 available = date
             )
@@ -307,7 +304,7 @@ def make_booking():
 
             # add booking to history for user and host
             try: 
-                redis.execute_command(f'lpush history_{id} "{booking.pk}"')
+                redis.execute_command(f'lpush history_{current_user} "{booking.pk}"')
                 redis.execute_command(f'lpush history_{host_id} "{booking.pk}"')
                
                 # remove from availabilities on booking
