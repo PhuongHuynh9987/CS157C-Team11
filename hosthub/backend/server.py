@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, redirect, url_for,send_from_directory
+from flask import Flask, jsonify, request, redirect, url_for,send_from_directory,current_app
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 import redis
@@ -21,7 +21,6 @@ from datetime import timedelta
 from datetime import timezone
 from werkzeug.utils import secure_filename
 import requests
-from flask import current_app
 import json
 
 # from redis.cluster import RedisCluster
@@ -43,7 +42,7 @@ jwt = JWTManager(app)
 app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies", "json", "query_string"]
 app.config["JWT_COOKIE_SECURE"] = False
 app.config["JWT_SECRET_KEY"] = "mySecret"
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=0.01)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 
 # orginalPath = app.instance_path[0:-8]
@@ -240,7 +239,7 @@ def get_hosting_info():
     hostData = Host.Host.find(Host.Host.owner == current_user) 
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip,
-                "uploadedPhotos": hostData[0].uploadedPhotos, 'title':hostData[0].title}
+                "uploadedPhotos": hostData[0].uploadedPhotos, 'title':hostData[0].title,"perks": hostData[0].perks}
                 
 
 @app.route('/hostingInfo', methods = ["POST"])
@@ -249,7 +248,7 @@ def individual_host_info():
     hostData = Host.Host.find(Host.Host.pk == input["id"]) 
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip,
-                "uploadedPhotos": hostData[0].uploadedPhotos, 'title':hostData[0].title}
+                "uploadedPhotos": hostData[0].uploadedPhotos, 'title':hostData[0].title, "perks": hostData[0].perks}
 
 
 @app.route('/uploads/<path:filename>', methods = ["GET"])
