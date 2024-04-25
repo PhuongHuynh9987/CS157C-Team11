@@ -23,16 +23,25 @@ export default function HostSignUp(){
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
     const [availability, setAvailability] = useState(false);
+
     const {user,ready,isHost,setUser} = useContext(UserContext);
+
+
+    if (ready && !user){
+        return <Navigate to = {'/login'} />
+    }
+
+
+    if (perks === undefined || perks === null ) {
+        setPerks([])
+    }
+
 
     const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
                     "Kitchen Access", "Private Bedroom", "Pets allowed"]
     const icons = [truckPlane, truckPlane, groceries, kitchen, bed, pets]
 
-    if (perks === null) {
-        setPerks([])
-    }
-
+  
     useEffect(()=> {
         try {
             axios.get('/hostingInfo').then(({data}) => {
@@ -73,8 +82,8 @@ export default function HostSignUp(){
                     city,
                     state,
                     zip,
-                    perks,
-                    uploadedPhotos
+                    uploadedPhotos,
+                    perks
                 })
                 setRedirect(true);
             }
@@ -102,6 +111,7 @@ export default function HostSignUp(){
             }
         }
     }
+    console.log(perks)
 
     if (redirect){
         return <Navigate to ={'/account/profile'} />
@@ -123,6 +133,7 @@ export default function HostSignUp(){
             console.log(e);
         } 
     }
+
     function uploadingPhotos(ev){
         ev.preventDefault();
         const file = ev.target.files;
@@ -146,6 +157,7 @@ export default function HostSignUp(){
             }
     }
 
+    console.log(perks)
     function showCalenda(ev){
         ev.preventDefault();
         setAvailability(true)
@@ -238,22 +250,24 @@ export default function HostSignUp(){
                         <h2 className="">Upload</h2>
                     </label>
                 </div>
-
+   
                 <h2 className="font-medium text-2xl mt-4">Services</h2>
                 <p className="text-gray-400 w-full">Select services that you provide</p>
                 <div className="grid grid-cols-3 gap-5 mt-5 lg:grid-cols-4">
+             
                     {perkList.map((perk,key) => (
                         <label className="flex items-center gap-3 cursor-pointer"  key ={key} >   
-                            {perks.includes(perk) && (
+                       
+                            {  perks?.includes(perk) && (
                             <div>
-                                
+                                {perk}
                                 <input type="checkbox" checked value = {perk} onChange={updatePerks} />
                                 <img className="w-7" src={icons[key]} alt="" />
                                 <span>{perk}</span>
                             </div>
                             )} 
 
-                            {!perks.includes(perk) && (
+                            {!perks?.includes(perk) && (
                             <div>
                                     <input type="checkbox" value = {perk} onChange={updatePerks} />
                                     <img className="w-7" src={icons[key]}  alt="" />
