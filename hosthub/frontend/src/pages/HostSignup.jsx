@@ -99,8 +99,7 @@ export default function HostSignUp(){
                     zip,
                     perks,
                     uploadedPhotos,
-                    available
-                    uploadedPhotos,
+                    available,
                     perks
                 })
                 setRedirect(true);
