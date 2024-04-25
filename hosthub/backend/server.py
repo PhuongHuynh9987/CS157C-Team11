@@ -61,23 +61,24 @@ def members():
 @app.route("/register",methods = ["POST"])
 def register():
     input =  request.get_json()
+    print(input["username"])
     if not input:
         return "Bad Request", 400
 
     # Check for pre-existing account here
-    userData = User.User.find(User.User.username == input["username"])
-    if (userData):
-        return ("Username already exists", 404)
+    #userData = User.User.find(User.User.username == input["username"]).all()
+    #print(userData)
+    # if (userData):
+    #    return ("Username already exists", 404)
 
     pw_hash = bcrypt.generate_password_hash(input["password"],5).decode('utf-8')
     try: 
-        print(input["username"])
         person = User.User(
             username = input["username"],
             firstName =  input["firstName"],
             lastName = input["lastName"],
             email = input["email"],
-            password = pw_hash
+            password = pw_hash,
         )
         person.save()
         return {"user_id": person.pk}
