@@ -10,7 +10,7 @@ export default function UserInfoPage(){
     if (ready && !user){
         return <Navigate to = {'/login'} />
     }
-
+    // console.log(user)
     let {subpage} = useParams();
     if (subpage === undefined ){
        subpage = 'profile'
@@ -28,7 +28,6 @@ export default function UserInfoPage(){
         return classes
     }
     
-    console.log(ready)
     return (
         <div className="mx-20 mt-12">
             
@@ -87,5 +86,5 @@ export default function UserInfoPage(){
            
         </div>
     )
-}
 
+}

@@ -1,3 +1,5 @@
+
+from flask import Flask, jsonify, request, redirect, url_for,send_from_directory,current_app
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 import redis
@@ -13,11 +15,12 @@ from flask_jwt_extended import unset_jwt_cookies
 from flask_jwt_extended import verify_jwt_in_request
 from flask_jwt_extended import current_user
 from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import get_jwt
+from werkzeug.exceptions import HTTPException
 import os
 from datetime import datetime,timedelta,timezone
 from werkzeug.utils import secure_filename
 import requests
-from flask import Flask, current_app, jsonify, request, send_from_directory
 import json
 
 # from redis.cluster import RedisCluster
@@ -39,6 +42,7 @@ app.config["JWT_COOKIE_SECURE"] = False
 app.config["JWT_SECRET_KEY"] = "mySecret"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
+
 # orginalPath = app.instance_path[0:-8]
 rootPath = app.root_path
 pathName = rootPath + '/uploads'
@@ -48,7 +52,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # print(pathName)
 app.config['STATIC_FOLDER'] = 'uploads'
-# print(app.config.get('STATIC_FOLDER'))
 ######### enable Cors
 # CORS(app, resources ={r'/*':{'origins': 'http://localhost:5173'},'supports_credentials': True})
 CORS(app, origins = ['http://localhost:5173'],supports_credentials = True )
@@ -57,6 +60,23 @@ CORS(app, origins = ['http://localhost:5173'],supports_credentials = True )
 @app.route("/",methods = ["GET"])
 def members():
     return 'localhost:5000'+pathName+'1711999951.jpg'
+
+
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    print(e)
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
+
 
 # register a user account
 # user history will be a separate redis LIST in format history_{user_id}
@@ -84,10 +104,11 @@ def register():
         person.save()
         return {"user_id": person.pk}
     except ValidationError as e:
-        print(e)
+       return json.dumps(str(e)), 401
 
 # log into user account
 @app.route("/login",methods = ["POST"])
+# @jwt_required()
 def login():
     input =  request.get_json()
     userData = User.User.find(User.User.username == input["username"])
@@ -117,12 +138,14 @@ def login():
     else: 
         return "user not found"
 
+
 @app.route("/checkTokenExpiry",methods = ["GET"])
 @jwt_required()
 def chec_token_expiry():
     return str(get_jwt()["exp"])
 
 # log out of user account
+
 @app.route("/logout", methods = ["POST"] )
 def logout():
     response = jsonify({'logout': True})
@@ -257,6 +280,11 @@ def get_hosting_info():
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
                 'title':hostData[0].title, 'perks': hostData[0].perks, 
                 "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
+
+    except ValidationError as e:
+        return json.dumps(str(e)), 401
+
+
 
 @app.route('/hostingInfo', methods = ["POST"])
 def individual_host_info():

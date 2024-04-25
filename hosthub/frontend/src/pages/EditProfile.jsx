@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 import axios from "axios";
 
 export default function EditProfile(){
-    const {user,ready,isHost} = useContext(UserContext);
+    const {user,ready, tokenExpiry} = useContext(UserContext);
     const [uploading, setUploadingAction] = useState(false);
     const checkBox = ['Freshman', 'Sophormore', 'Junior','Senior','Exchange Student', 'Graduate']
     const [status, setStatus] = useState('');
@@ -20,6 +20,9 @@ export default function EditProfile(){
     if (ready && !user){
         return <Navigate to = {'/login'} />
     }
+
+    else if (tokenExpiry === 'token_expire')
+        return <Navigate to = {'/'} />
 
     useEffect(()=> {
         axios.get('/profile').then(({data}) => {
@@ -98,13 +101,11 @@ export default function EditProfile(){
     return <Navigate to ={'/account/profile'} />
     }
 
-    console.log(gender)
     return (
         <div className="mb-20">
             <h1 className="text-center font-semibold text-3xl text-yellow-400 mb-5">Editing My Profile</h1>
             <form onSubmit={saveUpdated}>
                 <div className="flex justify-center my-8">
-                    {/* <img className="aspect-square object-cover rounded-full w-60" src="https://img.freepik.com/free-photo/friendly-smiling-woman-looking-pleased-front_176420-20779.jpg" alt="" />                     */}
                     {!uploadedPhoto && profilePhoto && (
                         <img className="aspect-square object-cover rounded-full w-60" src ={'http://localhost:5000/uploads/'+profilePhoto} alt="" />                    
                     )}
@@ -115,7 +116,7 @@ export default function EditProfile(){
                 <div className="flex justify-center my-8 items-center gap-5">
                     <h2 className="underline cursor-pointer" onClick={editPhoto}>Edit photo</h2>
                     {uploading && (
-                             <label className="border border-blue-100 px-10 py-1 rounded-2xl flex items-center justify-center gap-2 cursor-pointer">
+                            <label htmlFor="Upload" className="border border-blue-100 px-10 py-1 rounded-2xl flex items-center justify-center gap-2 cursor-pointer">
                                 <input type="file" 
                                         className="hidden" 
                                         onChange={uploadingPhotos}/>
@@ -125,7 +126,7 @@ export default function EditProfile(){
                                     </svg> 
                                 </div>
                                 <h2 className="">Upload</h2>
-                         </label>
+                            </label>
                         )}
                 </div>
                 
@@ -158,18 +159,18 @@ export default function EditProfile(){
                         value = "Female"
                         onChange={e=> setGender(e.target.value)}
                         checked = {gender === "Female"}/>
-                    <label for="Female">Female</label>
+                    <label htmlFor="Female">Female</label>
                     <input type="checkbox"
                         value = "Male"
                         onChange={e=> setGender(e.target.value)}
                         checked = {gender === "Male"}/>
-                    <label for="Male">Male</label>
+                    <label htmlFor="Male">Male</label>
                 </div>
                 
                 <h2 className="text-2xl mt-4">Student Status</h2> 
                 <div className="flex gap-4">
                 {checkBox.map( item => (
-                       <div className="flex gap-2">
+                       <div className="flex gap-2" key = {item}>
                             <input type="checkbox" 
                                 value = {item} 
                                 onChange = {e=> setStatus(e.target.value)} 

@@ -26,21 +26,24 @@ export default function HostSignUp(){
     const [cost, setCost] = useState('')
     const [available, setAvailable] = useState([]);
     const [availability, setAvailability] = useState(false);
-    const {user,ready,isHost} = useContext(UserContext);
+    const {user,ready,isHost,setUser} = useContext(UserContext);
 
 
     if (ready && !user){
         return <Navigate to = {'/login'} />
     }
 
+
+    if (perks === undefined || perks === null ) {
+        setPerks([])
+    }
+
+
     const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
                     "Kitchen Access", "Private Bedroom", "Pets allowed"]
     const icons = [truckPlane, truckPlane, groceries, kitchen, bed, pets]
 
-    if (perks === null) {
-        setPerks([])
-    }
-
+  
     useEffect(()=> {
         axios.get('/hostingInfo').then(({data}) => {
             setTitle(data.title)
@@ -53,14 +56,31 @@ export default function HostSignUp(){
             setPerks(data.perks)
             setAvailable(data.available)
         })
+        try {
+            axios.get('/hostingInfo').then(({data}) => {
+                setTitle(data.title)
+                setAddress(data.address)
+                setCity(data.city)
+                setState(data.state)
+                setZip(data.zip)
+                setUploadedPhotos(data.uploadedPhotos)
+                setDesc(data.desc)
+                setPerks(data.perks)
+            })
+            if (!user){
+                <Navigate to = {'/login'} />
+            }
+        } catch(e){
+            console.log(e.code)
+            if(e.code === 401){
+                setUser(null)
+                return <Navigate to = {'/login'} />
+            }
+           
+        }
 
+       
     },[])
-
-    // available.forEach(element => {
-    //     available.pop(element)
-    //     element = element.slice(1,-1)
-    //     setAvailable([...available, element])
-    // });
 
     console.log()
 
@@ -80,6 +100,8 @@ export default function HostSignUp(){
                     perks,
                     uploadedPhotos,
                     available
+                    uploadedPhotos,
+                    perks
                 })
                 setRedirect(true);
             }
@@ -108,6 +130,7 @@ export default function HostSignUp(){
             }
         }
     }
+    console.log(perks)
 
     
 
@@ -131,6 +154,7 @@ export default function HostSignUp(){
             console.log(e);
         } 
     }
+
     function uploadingPhotos(ev){
         ev.preventDefault();
         const file = ev.target.files;
@@ -154,6 +178,7 @@ export default function HostSignUp(){
             }
     }
 
+
     function updateAvailability(ev){
         ev.preventDefault();
         let date = [fromDate, toDate,cost]
@@ -168,6 +193,9 @@ export default function HostSignUp(){
         ev.preventDefault()
         setAvailable(available.filter((item) => item !== data));
     }
+
+
+    console.log(perks)
 
     function showCalenda(ev){
         ev.preventDefault();
@@ -263,22 +291,24 @@ export default function HostSignUp(){
                         <h2 className="">Upload</h2>
                     </label>
                 </div>
-
+   
                 <h2 className="font-medium text-2xl mt-4">Services</h2>
                 <p className="text-gray-400 w-full">Select services that you provide</p>
                 <div className="grid grid-cols-3 gap-5 mt-5 lg:grid-cols-4">
+             
                     {perkList.map((perk,key) => (
                         <label className="flex items-center gap-3 cursor-pointer"  key ={key} >   
-                            {perks.includes(perk) && (
+                       
+                            {  perks?.includes(perk) && (
                             <div>
-                                
+                                {perk}
                                 <input type="checkbox" checked value = {perk} onChange={updatePerks} />
                                 <img className="w-7" src={icons[key]} alt="" />
                                 <span>{perk}</span>
                             </div>
                             )} 
 
-                            {!perks.includes(perk) && (
+                            {!perks?.includes(perk) && (
                             <div>
                                     <input type="checkbox" value = {perk} onChange={updatePerks} />
                                     <img className="w-7" src={icons[key]}  alt="" />
