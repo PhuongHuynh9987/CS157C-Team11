@@ -316,7 +316,7 @@ def make_booking():
                 redis.execute_command(f'srem available_{host_id} "{date}"')
 
                 # delete cart
-                redis.execute_command(f'')
+                redis.execute_command(f'del cart_{current_user}')
                 return("Booking complete")
             except Exception as e:
                 print(e)
