@@ -23,12 +23,7 @@ export default function HostSignUp(){
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
     const [availability, setAvailability] = useState(false);
-    const {user,ready,isHost} = useContext(UserContext);
-    
-
-    if (ready && !user){
-        return <Navigate to = {'/login'} />
-    }
+    const {user,ready,isHost,setUser} = useContext(UserContext);
 
     const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
                     "Kitchen Access", "Private Bedroom", "Pets allowed"]
@@ -39,19 +34,31 @@ export default function HostSignUp(){
     }
 
     useEffect(()=> {
-        axios.get('/hostingInfo').then(({data}) => {
-            setTitle(data.title)
-            setAddress(data.address)
-            setCity(data.city)
-            setState(data.state)
-            setZip(data.zip)
-            setUploadedPhotos(data.uploadedPhotos)
-            setDesc(data.desc)
-            setPerks(data.perks)
-        })
+        try {
+            axios.get('/hostingInfo').then(({data}) => {
+                setTitle(data.title)
+                setAddress(data.address)
+                setCity(data.city)
+                setState(data.state)
+                setZip(data.zip)
+                setUploadedPhotos(data.uploadedPhotos)
+                setDesc(data.desc)
+                setPerks(data.perks)
+            })
+            if (!user){
+                <Navigate to = {'/login'} />
+            }
+        } catch(e){
+            console.log(e.code)
+            if(e.code === 401){
+                setUser(null)
+                return <Navigate to = {'/login'} />
+            }
+           
+        }
 
+       
     },[])
-
 
     async function hostRegister(ev){
         ev.preventDefault();

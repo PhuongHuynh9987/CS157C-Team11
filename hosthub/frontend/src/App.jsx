@@ -32,7 +32,7 @@ function App() {
             <Route path="/account/:subpage" element={<UserInfoPage />} />
             <Route path="/hostpage/:id" element={<HostInfo />} />
             <Route path="/hostSignup" element={<HostSignUp />} />
-            {/* <Route path="/editProfile" element={<EditProfile />} /> */}
+            <Route path="/editProfile" element={<EditProfile />} />
           </Route>
       </Routes>
     </UserContextProvider>

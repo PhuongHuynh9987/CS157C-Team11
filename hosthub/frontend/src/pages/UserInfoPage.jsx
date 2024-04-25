@@ -10,7 +10,7 @@ export default function UserInfoPage(){
     if (ready && !user){
         return <Navigate to = {'/login'} />
     }
-
+    // console.log(user)
     let {subpage} = useParams();
     if (subpage === undefined ){
        subpage = 'profile'
@@ -28,7 +28,6 @@ export default function UserInfoPage(){
         return classes
     }
     
-    console.log(ready)
     return (
         <div className="mx-20 mt-12">
             
@@ -88,55 +87,3 @@ export default function UserInfoPage(){
         </div>
     )
 }
-
-{/* <div className="grid justify-center mt-10">
-            <div className="grid grid-cols-2 mt-20 mb-8 gap-9">
-                <div className="p-14 shadow-2xl rounded-xl  text-blue-500 bg-yellow-200">
-                    <div className="flex gap-4">
-                        <h2 className="text-l font-bold">Personal Info</h2>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
-                        </svg>
-                    </div>
-                    
-                    <p className="text-blue-500 mt-4">Provide or modify personal info</p>
-                </div>
-
-                <div className="p-14 shadow-2xl rounded-xl  text-blue-500 bg-yellow-200">
-                    <div className="flex gap-4">
-                        <h2 className="text-l font-bold">Login & Security</h2>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
-                        </svg>
-                    </div>
-                </div>
-
-                <div className="p-14 shadow-2xl rounded-xl  text-blue-500 bg-yellow-200">
-                    <div className="flex gap-4">
-                        <h2 className="text-l font-bold">Payment Methods</h2>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-                        </svg>
-                    </div>
-                </div>
-
-                <div className="p-14 shadow-2xl rounded-xl  text-blue-500 bg-yellow-200">
-                    <div className="flex gap-4">
-                        <h2 className="text-l font-bold">Privacy and Sharing</h2>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <div className="p-14 shadow-2xl rounded-xl  text-blue-500 bg-yellow-200">
-                <div className="flex gap-4">
-                    <h2 className="text-l font-bold">Your hosting information</h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
-                    </svg>
-
-                </div>
-            </div>
-        </div> */}

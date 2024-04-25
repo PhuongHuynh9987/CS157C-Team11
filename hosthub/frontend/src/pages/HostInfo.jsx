@@ -32,8 +32,6 @@ export default function HostInfo(){
             setSelecting(false)
     }
 
-
-    console.log(selecting)
     return (
         <>
         {host.length !== 0 && (
