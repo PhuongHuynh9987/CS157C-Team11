@@ -1,6 +1,7 @@
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 import redis
+import redis_om
 from Models import User, Booking, Host
 from pydantic import ValidationError
 from redis_om import Migrator
@@ -26,6 +27,7 @@ r = redis.Redis(host = 'localhost', port = 6379, decode_responses = True, db=0)
             # port=13404, db=0, password="n3pRbBl2Y9oMdJ7J36QTPHzJBPPSAaQQ")
 # rc = RedisCluster(host='localhost', port=16379)
 
+
 # ############ create Flask app
 app = Flask(__name__,static_url_path=None)
 app.config.from_object(__name__)
@@ -35,7 +37,7 @@ jwt = JWTManager(app)
 app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies", "json", "query_string"]
 app.config["JWT_COOKIE_SECURE"] = False
 app.config["JWT_SECRET_KEY"] = "mySecret"
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=0.01)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 # orginalPath = app.instance_path[0:-8]
 rootPath = app.root_path
@@ -94,20 +96,21 @@ def login():
         user = userData[0]
         hostData = Host.Host.find(Host.Host.owner == user.pk)
         checkPassword = bcrypt.check_password_hash(user.password, input["password"])
+
         if not checkPassword:
             return "wrong password"
         else:
             if (len(list(hostData)) == 0):
-                response = jsonify({"username":userData[0].username,
-                                    "firstName": userData[0].firstName,"lastName": userData[0].lastName,
-                                     "id":userData[0].pk,"email":userData[0].email, 
-                                     "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc,
-                                     "history":redis.execute_command(f"lrange history_{user.pk} 0 -1")})
+                response = jsonify({"username":user.username,
+                                    "firstName": user.firstName,"lastName": user.lastName,
+                                     "id":user.pk,"email":user.email, 
+                                     "profilePhoto": user.profilePhoto, "desc": user.desc,
+                                     "history":r.execute_command(f"lrange history_{user.pk} 0 -1")})
             else:
-                response = jsonify({"username":userData[0].username,"firstName": userData[0].firstName,
-                                    "lastName": userData[0].lastName, "id":userData[0].pk,"hostId":hostData[0].pk,
-                                    "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc,
-                                    "history":redis.execute_command(f"lrange history_{user.pk} 0 -1")})
+                response = jsonify({"username":user.username,"firstName": user.firstName,
+                                    "lastName": user.lastName, "id":user.pk,"hostId": user.pk,
+                                    "email":user.email, "profilePhoto": user.profilePhoto, "desc": user.desc,
+                                    "history":r.execute_command(f"lrange history_{user.pk} 0 -1")})
             access_token = create_access_token(identity=user.pk)
             set_access_cookies(response,access_token)
             return response
@@ -137,18 +140,19 @@ def profile():
         verify = verify_jwt_in_request()
         current_user = get_jwt_identity()
         userData = User.User.find(User.User.pk == current_user)
+        user = userData[0]
         hostData = Host.Host.find(Host.Host.owner == current_user)
         Migrator().run()    
         if (len(list(hostData)) == 0):
-            return  {"username":userData[0].username,"firstName": userData[0].firstName,
-                        "lastName": userData[0].lastName, "id":userData[0].pk, 
-                        "email":userData[0].email, "profilePhoto": userData[0].profilePhoto,
-                        "desc": userData[0].desc,"gender": userData[0].gender,"status": userData[0].status}
+            return  {"username":user.username,"firstName": user.firstName,
+                        "lastName": user.lastName, "id":user.pk, 
+                        "email":user.email, "profilePhoto": user.profilePhoto,
+                        "desc": user.desc,"gender": user.gender,"status": user.status}
         else:
-            return  {"username":userData[0].username,"firstName": userData[0].firstName,
-                    "lastName": userData[0].lastName, "id":userData[0].pk,"hostId":hostData[0].pk,
-                    "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, 
-                    "desc": userData[0].desc,"gender": userData[0].gender,"status": userData[0].status}
+            return  {"username":user.username,"firstName": user.firstName,
+                    "lastName": user.lastName, "id":user.pk,"hostId":hostData[0].pk,
+                    "email":user.email, "profilePhoto": user.profilePhoto, 
+                    "desc": user.desc,"gender": user.gender,"status": user.status}
 
 # update profile details
 @app.route("/updateProfile", methods = ["PUT"])
@@ -191,6 +195,11 @@ def hosting():
             perks = input["perks"],
         )
         host.save()
+        available = input['available']
+
+        for str in available:
+            r.execute_command(f'sadd available_{hostId} "{str}"')
+
         return {"host_id": host.pk}
 
     except ValidationError as e:
@@ -222,7 +231,7 @@ def hosting_update():
         available = input['available']
 
         for str in available:
-            redis.execute_command(f'sadd available_{hostId} "{str}"')
+            r.execute_command(f'sadd available_{hostId} {str}')
         return {"host_id": host.pk}
 
     except ValidationError as e:
@@ -246,7 +255,8 @@ def get_hosting_info():
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, "available":redis.execute_command(f"smembers available_{hostData.pk}")}
+                'title':hostData[0].title, 'perks': hostData[0].perks, 
+                "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
 
 @app.route('/hostingInfo', methods = ["POST"])
 def individual_host_info():
@@ -255,7 +265,8 @@ def individual_host_info():
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, "available":redis.execute_command(f"smembers available_{hostData.pk}")}
+                'title':hostData[0].title, 'perks': hostData[0].perks,
+                "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
 
 # add a potential booking to user cart
 @app.route('/addToCart', methods = ["POST"])
