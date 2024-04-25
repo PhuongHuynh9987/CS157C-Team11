@@ -15,6 +15,7 @@ from flask_jwt_extended import verify_jwt_in_request
 from flask_jwt_extended import current_user
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_jwt
+from werkzeug.exceptions import HTTPException
 import os
 from datetime import datetime
 from datetime import timedelta
@@ -54,7 +55,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # print(pathName)
 app.config['STATIC_FOLDER'] = 'uploads'
-# print(app.config.get('STATIC_FOLDER'))
 ######### enable Cors
 # CORS(app, resources ={r'/*':{'origins': 'http://localhost:5173'},'supports_credentials': True})
 CORS(app, origins = ['http://localhost:5173'],supports_credentials = True )
@@ -64,8 +64,25 @@ CORS(app, origins = ['http://localhost:5173'],supports_credentials = True )
 @app.route("/",methods = ["GET"])
 @jwt_required()
 def members():
-    return {"exp":get_jwt()["exp"]}
+    exp_timestamp = get_jwt()["exp"]
+    now = datetime.now(timezone.utc) 
+    target_timestamp = datetime.timestamp(now - timedelta(minutes=422))
+    return str(target_timestamp > exp_timestamp )
 
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    print(e)
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
 
 @app.route("/register",methods = ["POST"])
 def register():
@@ -83,9 +100,10 @@ def register():
         return {"user_id": person.pk}
 
     except ValidationError as e:
-        print(e)
+       return json.dumps(str(e)), 401
 
 @app.route("/login",methods = ["POST"])
+# @jwt_required()
 def login():
     input =  request.get_json()
     userData = User.User.find(User.User.username == input["username"])
@@ -113,11 +131,6 @@ def login():
     else: 
         return "user not found"
 
-
-@app.route("/checkTokenExpiry",methods = ["GET"])
-@jwt_required()
-def chec_token_expiry():
-    return str(get_jwt()["exp"])
 
 
 @app.route("/logout", methods = ["POST"] )
@@ -234,22 +247,29 @@ def fetch_allHost():
    
 @app.route('/hostingInfo', methods = ["GET"])
 def get_hosting_info():
-    verify = verify_jwt_in_request()
-    current_user = get_jwt_identity()
-    hostData = Host.Host.find(Host.Host.owner == current_user) 
-    return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
-               "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip,
-                "uploadedPhotos": hostData[0].uploadedPhotos, 'title':hostData[0].title,"perks": hostData[0].perks}
-                
+
+    try:
+        verify = verify_jwt_in_request()
+        current_user = get_jwt_identity()
+        hostData = Host.Host.find(Host.Host.owner == current_user) 
+        return {"id": hostData[0].pk,"desc": hostData[0].desc,
+                "address": hostData[0].address,"city":hostData[0].city,"state":hostData[0].state, 
+                    "zip":hostData[0].zip, "uploadedPhotos": hostData[0].uploadedPhotos, 
+                    'title':hostData[0].title, 'perks': hostData[0].perks}
+
+    except ValidationError as e:
+        return json.dumps(str(e)), 401
+
 
 @app.route('/hostingInfo', methods = ["POST"])
 def individual_host_info():
     input = request.get_json()
     hostData = Host.Host.find(Host.Host.pk == input["id"]) 
-    return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
-               "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip,
-                "uploadedPhotos": hostData[0].uploadedPhotos, 'title':hostData[0].title, "perks": hostData[0].perks}
 
+    return {"id": hostData[0].pk,"desc": hostData[0].desc,
+            "address": hostData[0].address,"city":hostData[0].city,"state":hostData[0].state, 
+            "zip":hostData[0].zip, "uploadedPhotos": hostData[0].uploadedPhotos, 
+            'title':hostData[0].title, 'perks': hostData[0].perks}
 
 @app.route('/uploads/<path:filename>', methods = ["GET"])
 def photoDisplay(filename):
