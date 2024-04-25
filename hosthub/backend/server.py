@@ -263,13 +263,14 @@ def individual_host_info():
 def add_cart():
     current_user = get_jwt_identity()
 
-    # check for cart hash by user id
-    cart_status = redis.execute_command(f"EXISTS cart_{current_user}")
+    # check if item is in cart hash
+    cart_full = redis.execute_command(f"hget cart_{current_user} host_id")
 
     # take host id and available time slot
     input = request.get_json()
 
-    if cart_status:
+    # if item in cart don't overwrite
+    if isinstance(cart_full, int):
         return ("Cart already occupied.")
     else:
         host_id = input["host_id"]
@@ -303,13 +304,19 @@ def make_booking():
             )
             booking.save()
 
-            # add booking to history for user and host
+            # add booking to history for user and host owner
+            host = Host.Host.find(Host.Host.pk == host_id) 
+            owner_id = host[0].owner
+
             try: 
                 redis.execute_command(f'lpush history_{current_user} "{booking.pk}"')
-                redis.execute_command(f'lpush history_{host_id} "{booking.pk}"')
+                redis.execute_command(f'lpush history_{owner_id} "{booking.pk}"')
                
                 # remove from availabilities on booking
                 redis.execute_command(f'srem available_{host_id} "{date}"')
+
+                # delete cart
+                redis.execute_command(f'')
                 return("Booking complete")
             except Exception as e:
                 print(e)
