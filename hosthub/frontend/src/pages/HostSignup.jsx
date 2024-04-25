@@ -7,6 +7,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext.jsx";
 import { Navigate } from "react-router-dom";
+import { format } from 'date-fns';
 
 export default function HostSignUp(){
     const [title, setTitle] = useState('');
@@ -22,8 +23,9 @@ export default function HostSignUp(){
     const [redirect, setRedirect] = useState('')
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
+    const [cost, setCost] = useState('')
+    const [available, setAvailable] = useState([]);
     const [availability, setAvailability] = useState(false);
-
     const {user,ready,isHost,setUser} = useContext(UserContext);
 
 
@@ -43,6 +45,17 @@ export default function HostSignUp(){
 
   
     useEffect(()=> {
+        axios.get('/hostingInfo').then(({data}) => {
+            setTitle(data.title)
+            setAddress(data.address)
+            setCity(data.city)
+            setState(data.state)
+            setZip(data.zip)
+            setUploadedPhotos(data.uploadedPhotos)
+            setDesc(data.desc)
+            setPerks(data.perks)
+            setAvailable(data.available)
+        })
         try {
             axios.get('/hostingInfo').then(({data}) => {
                 setTitle(data.title)
@@ -69,6 +82,8 @@ export default function HostSignUp(){
        
     },[])
 
+    console.log()
+
     async function hostRegister(ev){
         ev.preventDefault();
         const id = user.id;
@@ -82,6 +97,9 @@ export default function HostSignUp(){
                     city,
                     state,
                     zip,
+                    perks,
+                    uploadedPhotos,
+                    available
                     uploadedPhotos,
                     perks
                 })
@@ -102,7 +120,8 @@ export default function HostSignUp(){
                     state,
                     zip,
                     uploadedPhotos,
-                    perks
+                    perks,
+                    available
                 })
                 setRedirect(true);
             }
@@ -112,6 +131,8 @@ export default function HostSignUp(){
         }
     }
     console.log(perks)
+
+    
 
     if (redirect){
         return <Navigate to ={'/account/profile'} />
@@ -157,11 +178,31 @@ export default function HostSignUp(){
             }
     }
 
+
+    function updateAvailability(ev){
+        ev.preventDefault();
+        let date = [fromDate, toDate,cost]
+        setAvailable([...available,date.join()])
+        setFromDate('')
+        setToDate('')
+        setAvailability(false)
+    }
+
+
+    function deleteAvailability (ev,data){
+        ev.preventDefault()
+        setAvailable(available.filter((item) => item !== data));
+    }
+
+
     console.log(perks)
+
     function showCalenda(ev){
         ev.preventDefault();
         setAvailability(true)
     }
+
+
 
     return (
         <div className="m-12" onMouseDown={e=>setUploadFailure(false)}>
@@ -279,16 +320,47 @@ export default function HostSignUp(){
                 </div>
 
                 <h2 className="font-medium text-2xl my-4">Availability</h2>
+          
+
                 {availability && (
-                    <div className="flex gap-10">
+                    <div className="flex gap-5">
+                  
                         <input type="date" value = {fromDate} onChange={ev => setFromDate(ev.target.value)}/>
-                        <input type="date" value = {toDate} onChange={ev => setToDate(ev.target.value)}/>
-                        <button className="secondary" onClick={ev=> setAvailability(false)}>Add</button>
+                        <input type="date"   value = {toDate} onChange={ev => setToDate(ev.target.value)}/>
+                        <input type="text" className="pl-2" value ={cost} onChange={ev => setCost(ev.target.value)}/>
+                        <button className="secondary" onClick={updateAvailability}>Add</button>
                     </div>
                     
                 )}
                 {!availability &&(
-                    <button className="secondary h-10 text-white my-5" onClick={showCalenda}>Add a time length</button>
+                    <div className="mt-10">
+                        <div className="flex flex-col gap-3 ">
+                            
+                            {available?.length > 0 && available.map((data,key)=>(
+                                <div  key = {key} className="flex gap-16 items-center border border-2 px- py-3 justify-center rounded-2xl">
+                                    <div>
+                                        <h2 className="border-b-2 mb-1">Check in:</h2>
+                                        <h2> {data.slice(0,10)}</h2>
+                                        
+                                    </div>
+                                    
+                                    <div>
+                                        <h2 className="border-b-2 mb-1">Check out:</h2>
+                                        <h2>{data.slice(11,21)}</h2> 
+                                    </div>  
+                                    <div>
+                                        <h2 className="border-b-2 mb-1">Price:</h2>
+                                        <h2> ${data.slice(22,25)} /stay</h2>
+                                    </div>
+                                    
+                                    <button className="secondary" value = {data}  onClick={ev=> deleteAvailability(ev,data)}>Delete</button>
+
+                                </div>
+                            ) 
+                            )}
+                        </div>  
+                        <button className="secondary h-10 text-white my-10" onClick={showCalenda}>Add a time length</button>
+                     </div>
                 )}
                 <button className="primary my-16">Save</button>
             </form>

@@ -11,6 +11,7 @@ import pets from "../assets/pets.svg"
 export default function HostInfo(){
     const [host,setHost] = useState([])
     const [selecting, setSelecting] = useState(false)
+    const [selectedDate, setSelectedDate] = useState('');
     const hostId = useParams().id;
 
     useEffect(()=>{
@@ -24,12 +25,17 @@ export default function HostInfo(){
      "Kitchen Access", "Private Bedroom", "Pets allowed"]
     const icons = [truckPlane, truckPlane, groceries, kitchen, bed, pets]
 
-    function selectDate(ev){
+    function selectingDate(ev,date){
         ev.preventDefault();
+        setSelectedDate(date)
+
+      
         if (!selecting)
             setSelecting(true)
         else 
             setSelecting(false)
+
+     
     }
 
     return (
@@ -64,38 +70,25 @@ export default function HostInfo(){
 
                     <h1 className="my-10 text-2xl font-bold">Availability</h1>
   
-                    <div className="flex flex-col gap-3 ">
+                   {host.available?.length > 0 && host.available.map((date,key) => (
+                     <div className="flex flex-col gap-3 " key={key}>
                         <div className="flex gap-16 items-center border border-2 px- py-3 justify-center rounded-2xl">
                             <div>
                                 <h2 className="border-b-2 mb-1">Check in:</h2>
-                                <h2>04/02/2024</h2>
+                                <h2>{date.slice(0,10)}</h2>
                             </div>
                             <div>
                                 <h2 className="border-b-2 mb-1">Check out:</h2>
-                                <h2>06/02/2024</h2> 
+                                <h2>{date.slice(11,21)}</h2>
                             </div>  
                             <div>
                                 <h2 className="border-b-2 mb-1">Incentive:</h2>
-                                <h2> $500 /stay</h2>
+                                <h2> ${date.slice(22,25)}/stay</h2>
                             </div>
-                            <button onClick={selectDate} className="secondary">Select</button>
-                        </div>
-                        <div className="flex gap-16 items-center border border-2 px- py-3 justify-center rounded-2xl">
-                            <div>
-                                <h2 className="border-b-2 mb-1">Check in:</h2>
-                                <h2>04/02/2024</h2>
-                            </div>
-                            <div>
-                                <h2 className="border-b-2 mb-1">Check out:</h2>
-                                <h2>06/02/2024</h2> 
-                            </div>  
-                            <div>
-                                <h2 className="border-b-2 mb-1">Incentive:</h2>
-                                <h2> $500 /stay</h2>
-                            </div>
-                            <button onClick={selectDate} className="secondary">Select</button>
-                        </div>
-                    </div>    
+                         <button  value = {date} onClick={ev=>selectingDate(ev,date)} className="secondary">Select</button>
+                     </div>
+                 </div>    
+                   ))}
 
 
                    {selecting && (
@@ -104,15 +97,15 @@ export default function HostInfo(){
                         <div className="flex justify-center">
                             <form onSubmit={""} className=" mt-10 border-2 w-1/2 flex flex-col justify-center rounded-xl px-16 py-6">
                             <div className="flex justify-center gap-3 p-2">
-                                    <h2>04/02/2024</h2>
+                                    <h2>{selectedDate.slice(0,10)}</h2>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                                         </svg>
-                                        <h2>05/02/2024 </h2> 
+                                        <h2> {selectedDate.slice(11,21)}</h2> 
                                 </div>
                                 <div className="flex justify-center gap-3 p-4">
                                     <h2>Total Cost: </h2>
-                                    <h2>$500 /stay</h2>
+                                    <h2>${selectedDate.slice(22,25)} / stay</h2>
                                 </div>
                                 <button className="primary">Reserve</button>
                             </form>   

@@ -86,4 +86,5 @@ export default function UserInfoPage(){
            
         </div>
     )
+
 }
