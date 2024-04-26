@@ -28,7 +28,6 @@ export default function HostSignUp(){
     const [availability, setAvailability] = useState(false);
     const {user,ready,isHost,setUser} = useContext(UserContext);
 
-
     if (ready && !user){
         return <Navigate to = {'/login'} />
     }
