@@ -7,7 +7,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext.jsx";
 import { Navigate } from "react-router-dom";
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
 
 export default function HostSignUp(){
     const [title, setTitle] = useState('');
@@ -80,8 +80,6 @@ export default function HostSignUp(){
 
        
     },[])
-
-    console.log()
 
     async function hostRegister(ev){
         ev.preventDefault();
@@ -186,14 +184,10 @@ export default function HostSignUp(){
         setAvailability(false)
     }
 
-
     function deleteAvailability (ev,data){
         ev.preventDefault()
         setAvailable(available.filter((item) => item !== data));
     }
-
-
-    console.log(perks)
 
     function showCalenda(ev){
         ev.preventDefault();
@@ -299,7 +293,6 @@ export default function HostSignUp(){
                        
                             {  perks?.includes(perk) && (
                             <div>
-                                {perk}
                                 <input type="checkbox" checked value = {perk} onChange={updatePerks} />
                                 <img className="w-7" src={icons[key]} alt="" />
                                 <span>{perk}</span>
@@ -348,7 +341,7 @@ export default function HostSignUp(){
                                     </div>  
                                     <div>
                                         <h2 className="border-b-2 mb-1">Price:</h2>
-                                        <h2> ${data.slice(22,25)} /stay</h2>
+                                        <h2> ${data.slice(22,30)} / stay</h2>
                                     </div>
                                     
                                     <button className="secondary" value = {data}  onClick={ev=> deleteAvailability(ev,data)}>Delete</button>

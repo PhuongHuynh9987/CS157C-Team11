@@ -218,10 +218,11 @@ def hosting():
             perks = input["perks"],
         )
         host.save()
-        available = input['available']
 
+        r.execute_command(f'del available_{hostId}')
+        available = input['available']
         for str in available:
-            r.execute_command(f'sadd available_{hostId} "{str}"')
+            r.execute_command(f'sadd available_{hostId} {str}')
 
         return {"host_id": host.pk}
 
@@ -236,6 +237,7 @@ def hosting_update():
     Migrator().run()   
     hostInfo = list(hostInfo)[0]
     hostId = hostInfo.pk
+
     try: 
         host = Host.Host(
             pk = hostId,
@@ -252,7 +254,7 @@ def hosting_update():
         host.save()
         # take input of availabilities and add to available_{host_id} set
         available = input['available']
-
+        r.execute_command(f'del available_{hostId}')
         for str in available:
             r.execute_command(f'sadd available_{hostId} {str}')
         return {"host_id": host.pk}
@@ -272,15 +274,15 @@ def fetch_allHost():
 # see hosting info
 @app.route('/hostingInfo', methods = ["GET"])
 def get_hosting_info():
-    verify = verify_jwt_in_request()
-    current_user = get_jwt_identity()
-    hostData = Host.Host.find(Host.Host.owner == current_user) 
-    return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
-               "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
-                "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, 
-                "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
-
+    try:
+        verify = verify_jwt_in_request()
+        current_user = get_jwt_identity()
+        hostData = Host.Host.find(Host.Host.owner == current_user) 
+        return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
+                    "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
+                        "uploadedPhotos": hostData[0].uploadedPhotos, 
+                        'title':hostData[0].title, 'perks': hostData[0].perks, 
+                        "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
     except ValidationError as e:
         return json.dumps(str(e)), 401
 
@@ -313,6 +315,7 @@ def add_cart():
         host_id = input["host_id"]
         available = input["available"]
         redis.execute_command(f'hmset cart_{current_user} host_id "{host_id}" available "{available}"')
+        return current_user
 
 # empty the user's cart
 @app.route("/clearCart", methods = ["POST"])

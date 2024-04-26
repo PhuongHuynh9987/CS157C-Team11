@@ -6,6 +6,8 @@ import truckPlane from "../assets/truck-plane-solid.svg";
 import kitchen from "../assets/kitchen-set-solid.svg"
 import groceries from "../assets/groceries-svgrepo-com.svg"
 import pets from "../assets/pets.svg"
+import { Link ,Navigate} from "react-router-dom"
+
 
 
 export default function HostInfo(){
@@ -105,9 +107,10 @@ export default function HostInfo(){
                                 </div>
                                 <div className="flex justify-center gap-3 p-4">
                                     <h2>Total Cost: </h2>
-                                    <h2>${selectedDate.slice(22,25)} / stay</h2>
+                                    <h2>${selectedDate.slice(22,30)} / stay</h2>
                                 </div>
-                                <button className="primary">Reserve</button>
+                            
+                                <Link to={'/checkOut/'}><button className="primary">Reserve</button></Link>
                             </form>   
                         </div>
                     </div>
