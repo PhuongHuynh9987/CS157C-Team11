@@ -247,7 +247,7 @@ def get_hosting_info():
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, "available":redis.execute_command(f"smembers available_{hostData.pk}")}
+                'title':hostData[0].title, 'perks': hostData[0].perks, "available":r.execute_command(f"smembers available_{hostData.pk}")}
 
 @app.route('/hostingInfo', methods = ["POST"])
 def individual_host_info():
@@ -256,7 +256,7 @@ def individual_host_info():
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, "available":redis.execute_command(f"smembers available_{hostData.pk}")}
+                'title':hostData[0].title, 'perks': hostData[0].perks, "available":r.execute_command(f"smembers available_{hostData.pk}")}
 
 # add a potential booking to user cart
 @app.route('/addToCart', methods = ["POST"])
@@ -264,7 +264,7 @@ def add_cart():
     current_user = get_jwt_identity()
 
     # check if item is in cart hash
-    cart_full = redis.execute_command(f"hget cart_{current_user} host_id")
+    cart_full = r.execute_command(f"hget cart_{current_user} host_id")
 
     # take host id and available time slot
     input = request.get_json()
@@ -275,13 +275,13 @@ def add_cart():
     else:
         host_id = input["host_id"]
         available = input["available"]
-        redis.execute_command(f'hmset cart_{current_user} host_id "{host_id}" available "{available}"')
+        r.execute_command(f'hmset cart_{current_user} host_id "{host_id}" available "{available}"')
 
 # empty the user's cart
 @app.route("/clearCart", methods = ["POST"])
 def clear_cart():
     current_user = get_jwt_identity()
-    redis.execute_command(f"delete cart_{current_user}")
+    r.execute_command(f"delete cart_{current_user}")
     return("Cart emptied.")
 
 # execute booking
@@ -289,12 +289,12 @@ def clear_cart():
 def make_booking():
     current_user = get_jwt_identity()
     # check for cart hash by user id
-    cart_status = redis.execute_command(f"EXISTS cart_{current_user}")
+    cart_status = r.execute_command(f"EXISTS cart_{current_user}")
 
     if cart_status:
         try:
-            host_id = redis.execute_command(f'hget cart_{current_user} host_id')
-            date = redis.execute_command(f'hget cart_{current_user} available')
+            host_id = r.execute_command(f'hget cart_{current_user} host_id')
+            date = r.execute_command(f'hget cart_{current_user} available')
 
             # create booking
             booking = Booking.Booking(
@@ -309,14 +309,14 @@ def make_booking():
             owner_id = host[0].owner
 
             try: 
-                redis.execute_command(f'lpush history_{current_user} "{booking.pk}"')
-                redis.execute_command(f'lpush history_{owner_id} "{booking.pk}"')
+                r.execute_command(f'lpush history_{current_user} "{booking.pk}"')
+                r.execute_command(f'lpush history_{owner_id} "{booking.pk}"')
                
                 # remove from availabilities on booking
-                redis.execute_command(f'srem available_{host_id} "{date}"')
+                r.execute_command(f'srem available_{host_id} "{date}"')
 
                 # delete cart
-                redis.execute_command(f'del cart_{current_user}')
+                r.execute_command(f'del cart_{current_user}')
                 return("Booking complete")
             except Exception as e:
                 print(e)
