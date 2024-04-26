@@ -22,6 +22,7 @@ export default function HostSignUp(){
     const [redirect, setRedirect] = useState('')
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
+    const [available, setAvailable] = useState('')
     const [availability, setAvailability] = useState(false);
     const {user,ready,isHost} = useContext(UserContext);
     
@@ -52,7 +53,6 @@ export default function HostSignUp(){
 
     },[])
 
-
     async function hostRegister(ev){
         ev.preventDefault();
         const id = user.id;
@@ -67,7 +67,8 @@ export default function HostSignUp(){
                     state,
                     zip,
                     perks,
-                    uploadedPhotos
+                    uploadedPhotos,
+                    available
                 })
                 setRedirect(true);
             }
@@ -86,7 +87,8 @@ export default function HostSignUp(){
                     state,
                     zip,
                     uploadedPhotos,
-                    perks
+                    perks,
+                    available
                 })
                 setRedirect(true);
             }

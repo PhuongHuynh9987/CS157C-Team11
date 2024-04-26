@@ -35,7 +35,7 @@ jwt = JWTManager(app)
 app.config["JWT_TOKEN_LOCATION"] = ["headers", "cookies", "json", "query_string"]
 app.config["JWT_COOKIE_SECURE"] = False
 app.config["JWT_SECRET_KEY"] = "mySecret"
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=0.01)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 # orginalPath = app.instance_path[0:-8]
 rootPath = app.root_path
@@ -219,13 +219,14 @@ def hosting_update():
             perks = input["perks"],
         )
         host.save()
+        return {"host_id": host.pk}
         
     except ValidationError as e:
             print(e)
 
 # add availabilities
-@app.route("/addAvailability", methods = ["PUT"])
-def add_availability():
+#@app.route("/addAvailability", methods = ["PUT"])
+#def add_availability():
     # input = request.get_
 
     # # take input of availabilities and add to available_{host_id} set
@@ -254,7 +255,8 @@ def get_hosting_info():
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, "available":r.execute_command(f"smembers available_{hostData.pk}")}
+                'title':hostData[0].title, 'perks': hostData[0].perks, "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
+
 
 @app.route('/hostingInfo', methods = ["POST"])
 def individual_host_info():
@@ -263,7 +265,7 @@ def individual_host_info():
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, "available":r.execute_command(f"smembers available_{hostData.pk}")}
+                'title':hostData[0].title, 'perks': hostData[0].perks, "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
 
 # cart preview
 @app.route("/showCart", methods = ["GET"])
