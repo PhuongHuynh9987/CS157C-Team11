@@ -103,12 +103,12 @@ def login():
                                     "firstName": userData[0].firstName,"lastName": userData[0].lastName,
                                      "id":userData[0].pk,"email":userData[0].email, 
                                      "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc,
-                                     "history":redis.execute_command(f"lrange history_{user.pk} 0 -1")})
+                                     "history":r.execute_command(f"lrange history_{user.pk} 0 -1")})
             else:
                 response = jsonify({"username":userData[0].username,"firstName": userData[0].firstName,
                                     "lastName": userData[0].lastName, "id":userData[0].pk,"hostId":hostData[0].pk,
                                     "email":userData[0].email, "profilePhoto": userData[0].profilePhoto, "desc": userData[0].desc,
-                                    "history":redis.execute_command(f"lrange history_{user.pk} 0 -1")})
+                                    "history":r.execute_command(f"lrange history_{user.pk} 0 -1")})
             access_token = create_access_token(identity=user.pk)
             set_access_cookies(response,access_token)
             return response
@@ -219,15 +219,22 @@ def hosting_update():
             perks = input["perks"],
         )
         host.save()
-        # take input of availabilities and add to available_{host_id} set
-        available = input['available']
-
-        for str in available:
-            redis.execute_command(f'sadd available_{hostId} "{str}"')
-        return {"host_id": host.pk}
-
+        
     except ValidationError as e:
             print(e)
+
+# add availabilities
+@app.route("/addAvailability", methods = ["PUT"])
+def add_availability():
+    # input = request.get_
+
+    # # take input of availabilities and add to available_{host_id} set
+    # available = input['available']
+
+    # for str in available:
+    #     r.execute_command(f'sadd available_{hostId} "{str}"')
+    # return {"host_id": host.pk}
+
 
 # see all hostings
 @app.route('/fetch_allHost', methods = ["GET"])
@@ -258,6 +265,16 @@ def individual_host_info():
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
                 'title':hostData[0].title, 'perks': hostData[0].perks, "available":r.execute_command(f"smembers available_{hostData.pk}")}
 
+# cart preview
+@app.route("/showCart", methods = ["GET"])
+def show_cart():
+    current_user = get_jwt_identity()
+
+    host_id = r.execute_command(f"hget cart_{current_user} host_id")
+    hostData = Host.Host.find(Host.Host.pk == input["id"]) 
+
+    return {"title":hostData[0].title}
+
 # add a potential booking to user cart
 @app.route('/addToCart', methods = ["POST"])
 def add_cart():
@@ -281,7 +298,7 @@ def add_cart():
 @app.route("/clearCart", methods = ["POST"])
 def clear_cart():
     current_user = get_jwt_identity()
-    r.execute_command(f"delete cart_{current_user}")
+    r.execute_command(f"del cart_{current_user}")
     return("Cart emptied.")
 
 # execute booking
