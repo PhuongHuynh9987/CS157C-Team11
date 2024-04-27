@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useContext} from "react";
 import { useParams } from "react-router-dom"
 import bed from "../assets/bed-solid.svg";
 import truckPlane from "../assets/truck-plane-solid.svg";
@@ -8,9 +8,11 @@ import groceries from "../assets/groceries-svgrepo-com.svg"
 import pets from "../assets/pets.svg"
 import { Link ,Navigate} from "react-router-dom"
 
+import { UserContext } from "../UserContext.jsx";
 
 
 export default function HostInfo(){
+    const {user} = useContext(UserContext);
     const [host,setHost] = useState([])
     const [selecting, setSelecting] = useState(false)
     const [selectedDate, setSelectedDate] = useState('');
@@ -110,7 +112,13 @@ export default function HostInfo(){
                                     <h2>${selectedDate.slice(22,30)} / stay</h2>
                                 </div>
                             
-                                <Link to={'/checkOut/'}><button className="primary">Reserve</button></Link>
+                               {user !== null && (
+                                 <Link to={'/checkOut/'}><button className="primary">Reserve</button></Link>
+                               )}
+
+                                {user === null && (
+                                 <Link to={'/login/'}><button className="primary">Reserve</button></Link>
+                               )}
                             </form>   
                         </div>
                     </div>

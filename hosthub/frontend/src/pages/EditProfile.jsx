@@ -16,6 +16,10 @@ export default function EditProfile(){
     const [email, setEmail] = useState('');
     const [profilePhoto, setProfilePhoto] = useState('');
     const [desc, setDesc] = useState('');
+    const [addressNumber, setAddressNumber] = useState('');
+    const [city, setCity] = useState('');
+    const [zip, setZip] = useState('');
+    const [state, setState] = useState('');
 
     if (ready && !user){
         return <Navigate to = {'/login'} />
@@ -152,6 +156,42 @@ export default function EditProfile(){
                             onChange={e => {setEmail(e.target.value)}}
                             className="px-5" />
                 </div>
+
+                <h2 className="w-28">Address</h2>
+                <div className="flex items-start mb-2 flex-col"> 
+                   
+                    <div className='flex items-center'>  
+                        <h2 className="w-full">Address number</h2>
+                        <input type="email" 
+                            value={addressNumber} 
+                            onChange={e => {setAddressNumber(e.target.value)}}
+                            className="px-5" />
+                    </div>
+                    <div className='flex items-center'>  
+                        <h2 className="w-full">City</h2>
+                        <input type="email" 
+                            value={city} 
+                            onChange={e => {setCity(e.target.value)}}
+                            className="px-5" />
+                    </div>
+
+                    <div className='flex items-center'>  
+                        <h2 className="w-full">State</h2>
+                        <input type="email" 
+                            value={state} 
+                            onChange={e => {setState(e.target.value)}}
+                            className="px-5" />
+                    </div>
+
+                    <div className='flex items-center'>  
+                        <h2 className="w-full">Zipcode</h2>
+                        <input type="email" 
+                            value={zip} 
+                            onChange={e => {setZip(e.target.value)}}
+                            className="px-5" />
+                    </div>
+                </div>
+
 
                 <h2 className="text-2xl mt-4">Gender</h2> 
                 <div className="flex gap-2">

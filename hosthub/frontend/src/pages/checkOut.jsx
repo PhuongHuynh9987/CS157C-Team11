@@ -1,18 +1,27 @@
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../UserContext.jsx";
+
 export default function CheckOut(){
+    const {user,ready} = useContext(UserContext);
+    function checkout (){
+       
+    }
+
     return(
-        <div className="flex items-center justify-center mt-20">
-            <form onSubmit={''} className="bg-gray-100 w-2/3 p-10 rounded-2xl">
-               <div>
+        <div className="flex items-center justify-center my-20">
+          
+            <form onSubmit={checkout} className="bg-gray-100 w-2/3 p-10 rounded-2xl">
+                <div>
                 <h2>Billing Information</h2>
-                    <hr />
+                    <hr/>
                     <div className="flex items-center justify-center">
                         <h3 className="w-1/4">First Name</h3>
-                        <input type="text" />
+                        <input type="text" value = {user?.firstName} />
                     </div>
 
                     <div className="flex items-center justify-center">
                         <h3 className="w-1/4">Last Name</h3>
-                        <input type="text" />
+                        <input type="text"  value = {user?.lastName} />
                     </div>
 
                     <div className="flex items-center justify-center">
@@ -55,25 +64,24 @@ export default function CheckOut(){
                         <hr />
                         <div className="grid grid-cols-2">
                             <div>
-                                <label for='master' className="m-3">Mastercard</label>
+                                <label htmlFor ='master' className="m-3">Mastercard</label>
                                 <input name = 'master' type="checkbox" />
                             </div>
                             <div>
-                                <label for='visa' className="m-3">Visa</label>
+                                <label htmlFor ='visa' className="m-3">Visa</label>
                                 <input name = 'visa' type="checkbox" />
                             </div>
                             <div>
-                                <label for='amex' className="m-3" >Amex</label>
+                                <label htmlFor ='amex' className="m-3" >Amex</label>
                                 <input name = 'amex' type="checkbox" />
                             </div>
                             <div>
-                                <label for='dis' className="m-3">Discover</label>
+                                <label htmlFor ='dis' className="m-3">Discover</label>
                                 <input name = 'dis' type="checkbox" />
                             </div>
                         </div>
-
-                      
                     </div>
+                    <button className="primary">Check out</button>
                 </form>
 
         </div>
