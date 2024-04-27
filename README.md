@@ -20,7 +20,12 @@
   - April 9th
       - Teammates discussed on the Redis Data models
       - Elena will continue on implementing data models for Cart, Host's availability, and Booking History
-      - Phuong will start working on drawing data model diagrams and report setup.  
+      - Phuong will start working on drawing data model diagrams and report setup.
+  - April 26th
+      - Elena finished availability and cart data model for backend
+      - Phuong will need to finish the checkout page.
+      - Team members will meet up on either next Tuesday or Thursday for demo and presentation preparation.
+      - Need to find a day to work on the final report after that. 
 
 ### Data Model:
 - User: JsonModel
