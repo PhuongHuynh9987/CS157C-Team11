@@ -47,7 +47,11 @@ export default function IndexPage (){
                                         <div className="flex justify-between px-2">
                                             <div className="flex items-center gap-3">
                                                 {host.perks && host.perks.map((perk,key)=>(
+<<<<<<< Updated upstream
                                                     <img className="w-7" src={icons[perkList.indexOf(perk)]} key = {key} alt="" />
+=======
+                                                    <img className="w-7" src={icons[perkList.indexOf(perk)]} key = {key}alt="" />
+>>>>>>> Stashed changes
                                                 ))}
                                             </div>
                                             <h4 className="italic">23 mile</h4>
