@@ -17,7 +17,6 @@ export default function Register(){
        
         if (username === '' || firstName === '' ||email === '' || password === '') {
             setEmptyField(false)
-            console.log('here')
         }
             
         else {

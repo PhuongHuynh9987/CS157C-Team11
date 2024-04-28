@@ -1,18 +1,83 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext.jsx";
+import { Link, Navigate, useParams } from "react-router-dom"
+import axios from "axios";
 
 export default function CheckOut(){
-    const {user,ready} = useContext(UserContext);
+    
+    const {user} = useContext(UserContext);
+    const [addressNumber, setAddressNumber] = useState('');
+    const [city , setCity] = useState('');
+    const [country, setCountry] = useState('');
+    const [state, setState] = useState('');
+    const [zip, setZip] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [email, setEmail] = useState('');
+
+    useEffect(()=> {
+        axios.get('/profile').then(({data}) => {
+            console.log(data)
+            setAddressNumber(data.addressNumber),
+            setCity(data.city),
+            setCountry(data.country),
+            setState(data.state),
+            setZip(data.zip),
+            setPhoneNumber(data.phoneNumber),
+            setEmail(data.email)
+        })
+    },[])
+
+    const [cart, setCart] = useState('');
+    const cart_id = useParams().cart_id;
+
+    useEffect(()=>{
+        try {
+            axios.post("/getCart", {"cart_id":cart_id}).then(({data})=>{
+                setCart(data)
+                console.log(data)
+            })
+        }
+        catch(e){
+            console.log(e)
+        } 
+    },[])
+
     function checkout (){
-       
+
     }
 
     return(
         <div className="flex items-center justify-center my-20">
-          
             <form onSubmit={checkout} className="bg-gray-100 w-2/3 p-10 rounded-2xl">
                 <div>
-                <h2>Billing Information</h2>
+                    <h1>Booking Details</h1>
+                    <div className='flex gap-8'>
+                        <h2>Host's Full Name:</h2>
+                        <h2>{cart.owner_firstName} {cart.owner_lastName}</h2>
+                    </div>
+                    <h2>Host's Address</h2>
+                    <div className="mx-10">
+                        <div className='flex gap-8'>
+                            <h2>Address Number:</h2>
+                            <h2>{cart.address}</h2>
+                        </div>
+                        <div className='flex gap-8'>
+                            <h2>City:</h2>
+                            <h2>{cart.city}</h2>
+                        </div>
+                        <div className='flex gap-8'>
+                            <h2>State:</h2>
+                            <h2>{cart.state}</h2>
+                        </div>
+                        <div className='flex gap-8'>
+                            <h2>Zipcode:</h2>
+                            <h2>{cart.zip}</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="my-10">
+                    <h1>Billing Information</h1>
                     <hr/>
                     <div className="flex items-center justify-center">
                         <h3 className="w-1/4">First Name</h3>
@@ -21,46 +86,53 @@ export default function CheckOut(){
 
                     <div className="flex items-center justify-center">
                         <h3 className="w-1/4">Last Name</h3>
-                        <input type="text"  value = {user?.lastName} />
+                        <input type="text"  value = {user?.lastName}/>
                     </div>
 
                     <div className="flex items-center justify-center">
-                        <h3 className="w-1/4">Address Line</h3>
-                        <input type="text" />
+                        <h3 className="w-1/4">Address Number</h3>
+                        <input type="text" value={addressNumber}  
+                                            onChange={e=>setAddressNumber(e.target.value)}/>
                     </div>
 
                     <div className="flex items-center justify-center">
                         <h3 className="w-1/4">City</h3>
-                        <input type="text" />
+                        <input type="text" value={city}  
+                                            onChange={e=>setCity(e.target.value)}/>
                     </div>
 
                     <div className="flex items-center justify-center">
                         <h3 className="w-1/4">Country</h3>
-                        <input type="text" />
+                        <input type="text" value={country}  
+                                            onChange={e=>setCountry(e.target.value)}/>
                     </div>
 
                     <div className="flex items-center justify-center">
                         <h3 className="w-1/4">State/Province</h3>
-                        <input type="text" />
+                        <input type="text" value={state}  
+                                            onChange={e=>setState(e.target.value)} />
                     </div>
 
                     <div className="flex items-center justify-center">
                         <h3 className="w-1/4">Zip/Postal Code</h3>
-                        <input type="text" />
+                        <input type="text" value={zip}  
+                                            onChange={e=>setZip(e.target.value)}/>
                     </div>
 
                     <div className="flex items-center justify-center">
                         <h3 className="w-1/4">Phone Number</h3>
-                        <input type="text" />
+                        <input type="text" value={phoneNumber}  
+                                            onChange={e=>setPhoneNumber(e.target.value)} />
                     </div>
 
                     <div className="flex items-center justify-center">
                         <h3 className="w-1/4">Email</h3>
-                        <input type="text" />
+                        <input type="text" value={email}  
+                                            onChange={e=>setEmail(e.target.value)} />
                     </div>
                 </div>
                 <div className="my-10">
-                    <h2>Payment Details</h2>
+                    <h1>Payment Details</h1>
                         <hr />
                         <div className="grid grid-cols-2">
                             <div>

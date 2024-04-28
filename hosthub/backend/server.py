@@ -170,31 +170,40 @@ def profile():
             return  {"username":user.username,"firstName": user.firstName,
                         "lastName": user.lastName, "id":user.pk, 
                         "email":user.email, "profilePhoto": user.profilePhoto,
-                        "desc": user.desc,"gender": user.gender,"status": user.status}
+                        "desc": user.desc,"gender": user.gender,"status": user.status,
+                        "addressNumber": user.addressNumber, "city": user.city, "country": user.country,
+                        "state":user.state, "zip":user.zip, "phoneNumber":user.phoneNumber}
         else:
             return  {"username":user.username,"firstName": user.firstName,
                     "lastName": user.lastName, "id":user.pk,"hostId":hostData[0].pk,
                     "email":user.email, "profilePhoto": user.profilePhoto, 
-                    "desc": user.desc,"gender": user.gender,"status": user.status}
+                    "desc": user.desc,"gender": user.gender,"status": user.status,
+                     "addressNumber": user.addressNumber, "city": user.city, "country": user.country,
+                        "state":user.state, "zip":user.zip, "phoneNumber":user.phoneNumber}
 
 # update profile details
 @app.route("/updateProfile", methods = ["PUT"])
 def update_profile():
     input = request.get_json()
-    hostData = User.User.find( User.User.pk == input["id"])
+    userData = User.User.find( User.User.pk == input["id"])
     Migrator().run()   
     try: 
         person = User.User(
-            pk = hostData[0].pk,
-            username = hostData[0].username,
+            pk = userData[0].pk,
+            username = userData[0].username,
             firstName =  input["firstName"],
             lastName = input["lastName"],
             email = input["email"],
             profilePhoto = input["uploadedPhoto"],
             desc = input["desc"],
-            password = hostData[0].password,
+            password = userData[0].password,
             gender = input["gender"],
-            status = input["status"]
+            status = input["status"],
+            addressNumber = input["addressNumber"],
+            city = input["city"],
+            state = input["state"],
+            country = input["country"],
+            phoneNumber = input["phoneNumber"],
         )
         person.save()
         return {"user_id": person.pk}
@@ -285,8 +294,6 @@ def get_hosting_info():
     except ValidationError as e:
         return json.dumps(str(e)), 401
 
-
-
 @app.route('/hostingInfo', methods = ["POST"])
 def individual_host_info():
     input = request.get_json()
@@ -297,23 +304,43 @@ def individual_host_info():
                 'title':hostData[0].title, 'perks': hostData[0].perks,
                 "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
 
+
+@app.route('/ownerInfo', methods = ["POST"])
+def ownerInfo():
+    input = request.get_json()
+    host = Host.Host.find(Host.Host.pk == input["id"]) 
+    return host[0].owner
+
 # add a potential booking to user cart
 @app.route('/addToCart', methods = ["POST"])
 def add_cart():
-    current_user = get_jwt_identity()
-
-    # check for cart hash by user id
-    cart_status = redis.execute_command(f"EXISTS cart_{current_user}")
-
-    # take host id and available time slot
     input = request.get_json()
+    host_id = input["id"]
+    user = input["user"]
+    date = input["date"]
+    
+    hostData = Host.Host.find(Host.Host.owner == user) 
 
-    if cart_status:
-        return ("Cart already occupied.")
+    if len(list(hostData)) != 0 and hostData[0].pk == host_id:
+        return "Failed"
     else:
-        host_id = input["host_id"]
-        available = input["available"]
-        redis.execute_command(f'hmset cart_{current_user} host_id "{host_id}" available "{available}"')
+        r.execute_command(f'hset cart_{user} host_id {host_id} date {date}')
+        return {"cart": 'cart_'+user}
+    
+@app.route('/getCart', methods = ["POST"])
+def get_cart():
+    input = request.get_json()
+    cart_id = input["cart_id"]
+    
+
+    cart_info = r.execute_command(f'hgetall {cart_id}')
+    hostData = Host.Host.find(Host.Host.pk == cart_info[1]) 
+    owner = User.User.find(Host.Host.pk == hostData[0].owner) 
+    return {"address":hostData[0].address,
+            "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip,
+            "owner_firstName": owner[0].firstName,
+            "owner_lastName": owner[0].lastName}
+
 
 # empty the user's cart
 @app.route("/clearCart", methods = ["POST"])

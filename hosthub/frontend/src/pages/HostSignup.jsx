@@ -7,7 +7,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext.jsx";
 import { Navigate } from "react-router-dom";
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
 
 export default function HostSignUp(){
     const [title, setTitle] = useState('');
@@ -45,17 +45,7 @@ export default function HostSignUp(){
 
   
     useEffect(()=> {
-        axios.get('/hostingInfo').then(({data}) => {
-            setTitle(data.title)
-            setAddress(data.address)
-            setCity(data.city)
-            setState(data.state)
-            setZip(data.zip)
-            setUploadedPhotos(data.uploadedPhotos)
-            setDesc(data.desc)
-            setPerks(data.perks)
-            setAvailable(data.available)
-        })
+
         try {
             axios.get('/hostingInfo').then(({data}) => {
                 setTitle(data.title)
@@ -66,6 +56,7 @@ export default function HostSignUp(){
                 setUploadedPhotos(data.uploadedPhotos)
                 setDesc(data.desc)
                 setPerks(data.perks)
+                setAvailable(data.available)
             })
             if (!user){
                 <Navigate to = {'/login'} />
@@ -77,12 +68,8 @@ export default function HostSignUp(){
                 return <Navigate to = {'/login'} />
             }
            
-        }
-
-       
+        } 
     },[])
-
-    console.log()
 
     async function hostRegister(ev){
         ev.preventDefault();

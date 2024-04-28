@@ -14,6 +14,12 @@ export default function EditProfile(){
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [addressNumber, setAddressNumber] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('')
+    const [zip, setZip] = useState('')
+    const [country, setCountry] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('')
     const [profilePhoto, setProfilePhoto] = useState('');
     const [desc, setDesc] = useState('');
 
@@ -29,10 +35,15 @@ export default function EditProfile(){
             setFirstName(data.firstName),
             setLastName(data.lastName),
             setEmail(data.email),
+            setGender(data.gender)
             setProfilePhoto(data.profilePhoto),
             setDesc(data.desc),
             setStatus(data.status),
-            setGender(data.gender)
+            setAddressNumber(data.addressNumber),
+            setCity(data.city),
+            setState(data.state),
+            setZip(data.zip),
+            setCountry(data.country)
         })
     },[])
 
@@ -74,6 +85,13 @@ export default function EditProfile(){
                     desc,
                     gender,
                     status,
+                    addressNumber,
+                    city, 
+                    state,
+                    zip,
+                    country,
+                    phoneNumber
+                   
                 });
                 setRedirect(true);
             }
@@ -86,7 +104,13 @@ export default function EditProfile(){
                     uploadedPhoto,
                     desc,
                     gender,
-                    status
+                    status,
+                    addressNumber,
+                    city, 
+                    state,
+                    zip,
+                    country,
+                    phoneNumber
                 });
                 setRedirect(true);
             }
@@ -151,6 +175,50 @@ export default function EditProfile(){
                             value={email} 
                             onChange={e => {setEmail(e.target.value)}}
                             className="px-5" />
+                </div>
+
+                <div>
+                <div className="flex items-center justify-center">
+                        <h3 className="w-1/4">Address Number</h3>
+                        <input type="text" value={addressNumber}  
+                                            onChange={e=>setAddressNumber(e.target.value)}/>
+                    </div>
+
+                    <div className="flex items-center justify-center">
+                        <h3 className="w-1/4">City</h3>
+                        <input type="text" value={city}  
+                                            onChange={e=>setCity(e.target.value)}/>
+                    </div>
+
+                    <div className="flex items-center justify-center">
+                        <h3 className="w-1/4">Country</h3>
+                        <input type="text" value={country}  
+                                            onChange={e=>setCountry(e.target.value)}/>
+                    </div>
+
+                    <div className="flex items-center justify-center">
+                        <h3 className="w-1/4">State/Province</h3>
+                        <input type="text" value={state}  
+                                            onChange={e=>setState(e.target.value)} />
+                    </div>
+
+                    <div className="flex items-center justify-center">
+                        <h3 className="w-1/4">Zip/Postal Code</h3>
+                        <input type="text" value={zip}  
+                                            onChange={e=>setZip(e.target.value)}/>
+                    </div>
+
+                    <div className="flex items-center justify-center">
+                        <h3 className="w-1/4">Phone Number</h3>
+                        <input type="text" value={phoneNumber}  
+                                            onChange={e=>setPhoneNumber(e.target.value)} />
+                    </div>
+
+                    <div className="flex items-center justify-center">
+                        <h3 className="w-1/4">Email</h3>
+                        <input type="text" value={email}  
+                                            onChange={e=>setEmail(e.target.value)} />
+                    </div>
                 </div>
 
                 <h2 className="text-2xl mt-4">Gender</h2> 

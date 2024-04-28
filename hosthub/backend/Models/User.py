@@ -10,6 +10,12 @@ class User(JsonModel):
     firstName: str 
     lastName: str
     email: str 
+    addressNumber:  Optional[str]
+    city:  Optional[str]
+    country:  Optional[str]
+    state:  Optional[str]
+    zip:  Optional[str]
+    phoneNumber: Optional[str]
     desc: Optional[str]
     password: str
     profilePhoto: Optional[str]

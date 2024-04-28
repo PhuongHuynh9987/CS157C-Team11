@@ -34,7 +34,7 @@ function App() {
             <Route path="/hostpage/:id" element={<HostInfo />} />
             <Route path="/hostSignup" element={<HostSignUp />} />
             <Route path="/editProfile" element={<EditProfile />} />
-            <Route path="/checkOut" element={<CheckOut />} />
+            <Route path="/checkOut/:cart_id" element={<CheckOut />} />
           </Route>
       </Routes>
     </UserContextProvider>
