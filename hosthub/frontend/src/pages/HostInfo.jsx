@@ -1,14 +1,16 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"
+import { useEffect, useState ,useContext} from "react";
+import { Link, useParams } from "react-router-dom"
 import bed from "../assets/bed-solid.svg";
 import truckPlane from "../assets/truck-plane-solid.svg";
 import kitchen from "../assets/kitchen-set-solid.svg"
 import groceries from "../assets/groceries-svgrepo-com.svg"
 import pets from "../assets/pets.svg"
+import { UserContext } from "../UserContext.jsx";
 
 
 export default function HostInfo(){
+    const {user,ready,isHost} = useContext(UserContext);
     const [host,setHost] = useState([])
     const [selecting, setSelecting] = useState(false)
     const [selectedDate, setSelectedDate] = useState('');
@@ -28,14 +30,10 @@ export default function HostInfo(){
     function selectingDate(ev,date){
         ev.preventDefault();
         setSelectedDate(date)
-
-      
         if (!selecting)
             setSelecting(true)
         else 
             setSelecting(false)
-
-     
     }
 
     return (
@@ -107,7 +105,12 @@ export default function HostInfo(){
                                     <h2>Total Cost: </h2>
                                     <h2>${selectedDate.slice(22,25)} / stay</h2>
                                 </div>
-                                <button className="primary">Reserve</button>
+                               {user && (
+                                <Link to={'/checkOut'}> <button className="primary">Reserve</button></Link>
+                               )}
+                                {!user && (
+                                     <Link to={'/login'}> <button className="primary">Reserve</button></Link>
+                                )}
                             </form>   
                         </div>
                     </div>

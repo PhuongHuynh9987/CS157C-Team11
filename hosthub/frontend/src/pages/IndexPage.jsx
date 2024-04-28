@@ -1,6 +1,6 @@
 import { Link ,Navigate} from "react-router-dom"
 import Map from "../Map.jsx"
-import { UserContext } from "../UserContext.jsx";
+
 import {useContext, useEffect, useState} from "react";
 import axios from "axios";
 import bed from "../assets/bed-solid.svg";
@@ -10,7 +10,7 @@ import groceries from "../assets/groceries-svgrepo-com.svg"
 import pets from "../assets/pets.svg"
 
 export default function IndexPage (){
-    // const {user,ready,isHost} = useContext(UserContext);
+    // 
     const [allHosts, setAllHosts] = useState([])
     const icons = [truckPlane, truckPlane, groceries, kitchen, bed, pets]
     const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
@@ -47,11 +47,7 @@ export default function IndexPage (){
                                         <div className="flex justify-between px-2">
                                             <div className="flex items-center gap-3">
                                                 {host.perks && host.perks.map((perk,key)=>(
-<<<<<<< Updated upstream
-                                                    <img className="w-7" src={icons[perkList.indexOf(perk)]} key = {key} alt="" />
-=======
                                                     <img className="w-7" src={icons[perkList.indexOf(perk)]} key = {key}alt="" />
->>>>>>> Stashed changes
                                                 ))}
                                             </div>
                                             <h4 className="italic">23 mile</h4>
