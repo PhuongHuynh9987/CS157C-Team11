@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext.jsx";
 import { Link, Navigate, useParams } from "react-router-dom"
+import Multiselect from 'multiselect-react-dropdown';
 import axios from "axios";
 
 export default function CheckOut(){
-    
     const {user} = useContext(UserContext);
     const [addressNumber, setAddressNumber] = useState('');
     const [city , setCity] = useState('');
@@ -13,10 +13,10 @@ export default function CheckOut(){
     const [zip, setZip] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
+    const[redirect,setRedirect] = useState(false)
 
     useEffect(()=> {
         axios.get('/profile').then(({data}) => {
-            console.log(data)
             setAddressNumber(data.addressNumber),
             setCity(data.city),
             setCountry(data.country),
@@ -29,12 +29,13 @@ export default function CheckOut(){
 
     const [cart, setCart] = useState('');
     const cart_id = useParams().cart_id;
-
+    const months = ["January", "Febuary", "March","April", "May","June", "July", "August","September",
+                    "October","November", "December"]
+    const years = [...Array(10).fill(1).map( (_, i) => i+2023 )]
     useEffect(()=>{
         try {
             axios.post("/getCart", {"cart_id":cart_id}).then(({data})=>{
                 setCart(data)
-                console.log(data)
             })
         }
         catch(e){
@@ -42,11 +43,31 @@ export default function CheckOut(){
         } 
     },[])
 
-    function checkout (){
-
+    function checkout (ev){
+        ev.preventDefault();
+        try {
+            const user_id = user.id
+            axios.post("/book",{
+                "user":user_id,
+                "host": cart.hostId
+            }).then(({data})=>{
+              if (data.booking_id){
+                alert("Booking Succesfully!")
+                setRedirect(true);
+              }
+            })
+        }
+        catch(e){
+            console.log(e);
+        }
     }
 
-    return(
+   
+    if (redirect){
+        return <Navigate to ={'/account/profile'} />
+    }
+
+    return (
         <div className="flex items-center justify-center my-20">
             <form onSubmit={checkout} className="bg-gray-100 w-2/3 p-10 rounded-2xl">
                 <div>
@@ -74,6 +95,11 @@ export default function CheckOut(){
                             <h2>{cart.zip}</h2>
                         </div>
                     </div>
+
+                    <h2>Date: </h2>
+                    <h2> {cart.date.slice(0,10)}    </h2>
+                    <h2> {cart.date.slice(11,21)}    </h2>
+                    <h2>Total: ${cart.date.slice(22,30)}  </h2>
                 </div>
 
                 <div className="my-10">
@@ -152,6 +178,40 @@ export default function CheckOut(){
                                 <input name = 'dis' type="checkbox" />
                             </div>
                         </div>
+
+                        <div className="flex items-center">
+                            <h2 className="w-1/4">Card Number: </h2>
+                            <input type="text"  onChange={''}/>
+                        </div>
+
+                        <div className="flex items-center w-full">
+                            <h2 className="w-1/4">Expire Month: </h2>
+                            <Multiselect  placeholder="Month"
+                                isObject={false}  
+                                className=""
+                                options={months} 
+                                // selectionLimit={1}
+                                singleSelect = {true}
+                              />  
+                        </div>
+
+                        <div className="flex items-center w-full">
+                            <h2 className="w-1/4">Expire Year: </h2>
+                            <Multiselect  placeholder="Year"
+                                isObject={false}  
+                                className=""
+                                options={years} 
+                                // selectionLimit={1}
+                                singleSelect = {true}
+                              />  
+                        </div>
+
+                        <div className="flex items-center">
+                            <h2 className="w-1/4">CVV: </h2>
+                            <input type="text" onChange={''}/>
+                        </div>
+
+
                     </div>
                     <button className="primary">Check out</button>
                 </form>

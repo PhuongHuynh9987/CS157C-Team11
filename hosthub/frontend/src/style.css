@@ -24,6 +24,20 @@ form input[type = 'date']:hover {
     @apply bg-blue-100;
 }
 
+.search-wrapper {
+    display: flex;
+}
+
+.search-wrapper span {
+    @apply bg-blue-300;
+
+    
+}
+
+/* .multiselect-container {
+    padding: rem;
+} */
+
 .w-full div {
     border: none;
 }
@@ -41,13 +55,6 @@ button.secondary {
     width: 100%;
 }
 
-.search-wrapper {
-    display: flex;
-}
-
-.search-wrapper span {
-    @apply bg-blue-300;
-}
 .closeIcon {
     @apply mr-3;
 }

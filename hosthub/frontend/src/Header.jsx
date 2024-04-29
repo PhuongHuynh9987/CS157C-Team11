@@ -65,10 +65,12 @@ export default function Header(){
               <form onSubmit={searching} className="flex gap-1 justify-start text-left w-full m-0">
                 <input type="date" value = {fromDate} onChange={ev => setFromDate(ev.target.value)}/>
                 <input type="date" value = {toDate} onChange={ev => setToDate(ev.target.value)}/>
-                <div className="w-full ">
+                <div className="w-full">
                   <Multiselect isObject={false} placeholder="any"  
                             className="multiselect"
                             options={perkList} 
+                            // selectionLimit={3}
+                            // singleSelect = {true}
                         showCheckbox  />   
                 </div> 
             </form>

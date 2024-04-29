@@ -8,4 +8,4 @@ r = redis.Redis(host = 'localhost', port = 6379, decode_responses = True, db=0)
 class Booking(JsonModel):
     user: str = Field(index=True)
     host: str
-    available: str # booking dates
+    date: str # booking dates

@@ -45,7 +45,6 @@ export default function HostSignUp(){
 
   
     useEffect(()=> {
-
         try {
             axios.get('/hostingInfo').then(({data}) => {
                 setTitle(data.title)
@@ -286,7 +285,6 @@ export default function HostSignUp(){
                        
                             {  perks?.includes(perk) && (
                             <div>
-                                {perk}
                                 <input type="checkbox" checked value = {perk} onChange={updatePerks} />
                                 <img className="w-7" src={icons[key]} alt="" />
                                 <span>{perk}</span>
