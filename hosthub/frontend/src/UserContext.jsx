@@ -1,8 +1,7 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
-// import {data} from "autoprefixer"
 import { Navigate } from "react-router-dom";
-
+import React from 'react';
 
 export const UserContext = createContext({})
 

@@ -7,7 +7,7 @@ import kitchen from "../assets/kitchen-set-solid.svg"
 import groceries from "../assets/groceries-svgrepo-com.svg"
 import pets from "../assets/pets.svg"
 import { UserContext } from "../UserContext.jsx";
-
+import React from 'react';
 
 export default function HostInfo(){
     const {user,ready,isHost} = useContext(UserContext);
@@ -17,7 +17,6 @@ export default function HostInfo(){
     const hostId = useParams().id;
     const [redirect, setRedirect] = useState('');
     const [cart, setCart] = useState('')
-  
 
     useEffect(()=>{
         axios.post("/hostingInfo", {"id":hostId}).then(({data})=>{
