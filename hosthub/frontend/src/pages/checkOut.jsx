@@ -14,6 +14,14 @@ export default function CheckOut(){
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const[redirect,setRedirect] = useState(false)
+    const [hostAddress, setHostAddress] = useState('');
+    const [hostCity, setHostCity] = useState('');
+    const [hostState, setHostState] = useState('');
+    const [hostZip, setHostZip] = useState('');
+    const [date, setDate] = useState('');
+    const [ownerFirstName, setOwnerFirstName] = useState('');
+    const [ownerLastName, setOwnerLastName] = useState('');
+    const cart_id = useParams().cart_id;
 
     useEffect(()=> {
         axios.get('/profile').then(({data}) => {
@@ -25,17 +33,21 @@ export default function CheckOut(){
             setPhoneNumber(data.phoneNumber),
             setEmail(data.email)
         })
+       
     },[])
 
-    const [cart, setCart] = useState('');
-    const cart_id = useParams().cart_id;
-    const months = ["January", "Febuary", "March","April", "May","June", "July", "August","September",
-                    "October","November", "December"]
-    const years = [...Array(10).fill(1).map( (_, i) => i+2023 )]
     useEffect(()=>{
         try {
             axios.post("/getCart", {"cart_id":cart_id}).then(({data})=>{
-                setCart(data)
+                console.log(data)
+                // setCart(data) 
+                setHostAddress(data.address),
+                setHostCity(data.city),
+                setHostState(data.state),
+                setHostZip(data.zip),
+                setDate(data.date),
+                setOwnerFirstName(data.owner_firstName),
+                setOwnerLastName(data.owner_lastName)
             })
         }
         catch(e){
@@ -43,13 +55,18 @@ export default function CheckOut(){
         } 
     },[])
 
+    
+    const months = ["January", "Febuary", "March","April", "May","June", "July", "August","September",
+                    "October","November", "December"]
+    const years = [...Array(10).fill(1).map( (_, i) => i+2023 )]
+   
+
     function checkout (ev){
         ev.preventDefault();
         try {
             const user_id = user.id
             axios.post("/book",{
-                "user":user_id,
-                "host": cart.hostId
+                "user":user_id
             }).then(({data})=>{
               if (data.booking_id){
                 alert("Booking Succesfully!")
@@ -74,32 +91,39 @@ export default function CheckOut(){
                     <h1>Booking Details</h1>
                     <div className='flex gap-8'>
                         <h2>Host's Full Name:</h2>
-                        <h2>{cart.owner_firstName} {cart.owner_lastName}</h2>
+                        <h2>{ownerFirstName} {ownerLastName}</h2>
                     </div>
                     <h2>Host's Address</h2>
                     <div className="mx-10">
                         <div className='flex gap-8'>
                             <h2>Address Number:</h2>
-                            <h2>{cart.address}</h2>
+                            <h2>{hostAddress}</h2>
                         </div>
                         <div className='flex gap-8'>
                             <h2>City:</h2>
-                            <h2>{cart.city}</h2>
+                            <h2>{hostCity}</h2>
                         </div>
                         <div className='flex gap-8'>
                             <h2>State:</h2>
-                            <h2>{cart.state}</h2>
+                            <h2>{hostState}</h2>
                         </div>
                         <div className='flex gap-8'>
                             <h2>Zipcode:</h2>
-                            <h2>{cart.zip}</h2>
+                            <h2>{hostZip}</h2>
                         </div>
                     </div>
 
                     <h2>Date: </h2>
-                    <h2> {cart.date.slice(0,10)}    </h2>
-                    <h2> {cart.date.slice(11,21)}    </h2>
-                    <h2>Total: ${cart.date.slice(22,30)}  </h2>
+                    <div className="flex gap-10">
+                        <h2> {date.slice(0,10)}    </h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                            </svg>
+
+                        <h2> {date.slice(11,21)}    </h2>
+                    </div>
+                    <h2>Total: ${date.slice(22,30)}  </h2>
+                
                 </div>
 
                 <div className="my-10">
