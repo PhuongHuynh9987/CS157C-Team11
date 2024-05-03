@@ -14,6 +14,8 @@ export default function CheckOut(){
     const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const[redirect,setRedirect] = useState(false)
+    const [cart, setCart] = useState('');
+    const cart_id = useParams().cart_id;
 
     useEffect(()=> {
         axios.get('/profile').then(({data}) => {
@@ -27,14 +29,11 @@ export default function CheckOut(){
         })
     },[])
 
-    const [cart, setCart] = useState('');
-    const cart_id = useParams().cart_id;
-    const months = ["January", "Febuary", "March","April", "May","June", "July", "August","September",
-                    "October","November", "December"]
-    const years = [...Array(10).fill(1).map( (_, i) => i+2023 )]
     useEffect(()=>{
+        console.log("here")
         try {
             axios.post("/getCart", {"cart_id":cart_id}).then(({data})=>{
+                // console.log(data)
                 setCart(data)
             })
         }
@@ -43,13 +42,18 @@ export default function CheckOut(){
         } 
     },[])
 
+  
+    const months = ["January", "Febuary", "March","April", "May","June", "July", "August","September",
+                    "October","November", "December"]
+    const years = [...Array(10).fill(1).map( (_, i) => i+2023 )]
+   
+
     function checkout (ev){
         ev.preventDefault();
         try {
             const user_id = user.id
             axios.post("/book",{
                 "user":user_id,
-                "host": cart.hostId
             }).then(({data})=>{
               if (data.booking_id){
                 alert("Booking Succesfully!")
@@ -97,9 +101,14 @@ export default function CheckOut(){
                     </div>
 
                     <h2>Date: </h2>
-                    <h2> {cart.date.slice(0,10)}    </h2>
-                    <h2> {cart.date.slice(11,21)}    </h2>
-                    <h2>Total: ${cart.date.slice(22,30)}  </h2>
+                    <div className="flex gap-4 items-center mx-10">
+                        <h2 className="border border-blue-300 border-2 p-1 rounded-xl"> {cart.date?.slice(0,10)}    </h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                        </svg>
+                        <h2 className="border border-blue-300 border-2 p-1 rounded-xl"> {cart.date?.slice(11,21)}    </h2>
+                    </div>
+                    <h2 className="mt-4">Total: $ { cart.date?.slice(22,30)}  </h2> 
                 </div>
 
                 <div className="my-10">
