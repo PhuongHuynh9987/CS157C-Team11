@@ -254,6 +254,8 @@ def hosting():
         host.save()
         available = input['available']
 
+        hostId = host.pk
+
         for str in available:
             r.execute_command(f'sadd available_{hostId} {str}')
 
