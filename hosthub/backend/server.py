@@ -248,13 +248,13 @@ def hosting():
             zip = input["zip"],
             uploadedPhotos = input["uploadedPhotos"],
             perks = input["perks"],
+            date = input["available"],
         )
         host.save()
         available = input['available']
 
         for str in available:
             r.execute_command(f'sadd available_{hostId} {str}')
-
         return {"host_id": host.pk}
 
     except ValidationError as e:
@@ -285,7 +285,7 @@ def hosting_update():
         host.save()
         # take input of availabilities and add to available_{host_id} set
         available = input['available']
-
+        r.execute_command(f'del available_{hostId}')
         for str in available:
             r.execute_command(f'sadd available_{hostId} {str}')
         return {"host_id": host.pk}

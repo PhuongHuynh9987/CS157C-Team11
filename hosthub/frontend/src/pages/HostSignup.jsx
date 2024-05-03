@@ -7,7 +7,6 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext.jsx";
 import { Navigate } from "react-router-dom";
-// import { format } from 'date-fns';
 
 export default function HostSignUp(){
     const [title, setTitle] = useState('');
@@ -181,6 +180,7 @@ export default function HostSignUp(){
 
     function deleteAvailability (ev,data){
         ev.preventDefault()
+        console.log(data);
         setAvailable(available.filter((item) => item !== data));
     }
 
