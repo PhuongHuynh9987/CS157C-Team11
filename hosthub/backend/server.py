@@ -316,8 +316,22 @@ def individual_host_info():
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
+<<<<<<< Updated upstream
                 'title':hostData[0].title, 'perks': hostData[0].perks,
                 "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
+=======
+                'title':hostData[0].title, 'perks': hostData[0].perks, "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
+
+# cart preview
+@app.route("/showCart", methods = ["GET"])
+def show_cart():
+    current_user = get_jwt_identity()
+
+    host_id = r.execute_command(f"hget cart_{current_user} host_id")
+    hostData = Host.Host.find(Host.Host.pk == input["id"]) 
+
+    return {"title":hostData[0].title}
+>>>>>>> Stashed changes
 
 
 @app.route('/ownerInfo', methods = ["POST"])
