@@ -54,7 +54,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['STATIC_FOLDER'] = 'uploads'
 ######### enable Cors
 # CORS(app, resources ={r'/*':{'origins': 'http://localhost:5173'},'supports_credentials': True})
-CORS(app, origins = ['http://localhost:5173'],supports_credentials = True )
+CORS(app, origins = ['http://localhost:5173'], supports_credentials = True )
 
 # Api route
 @app.route("/",methods = ["GET"])
@@ -167,27 +167,43 @@ def profile():
     if len(list(token)) == 0:
         return "no user"
     else:
+        # Getting user
         verify = verify_jwt_in_request()
         current_user = get_jwt_identity()
+
+        #Getting booking history
+        re = r.execute_command(f'lrange history_{current_user} 0 -1')
+        booking_list = []
+        for i in re:
+            bookings = Booking.Booking.find(Booking.Booking.pk == i)
+            booking_info = {"hostId": bookings[0].host, "date": bookings[0].date}
+            booking_list.append(booking_info)
+
+        # Getting user and host information 
         userData = User.User.find(User.User.pk == current_user)
         user = userData[0]
         hostData = Host.Host.find(Host.Host.owner == current_user)
         Migrator().run()    
+
         if (len(list(hostData)) == 0):
             return  {"username":user.username,"firstName": user.firstName,
                         "lastName": user.lastName, "id":user.pk, 
                         "email":user.email, "profilePhoto": user.profilePhoto,
                         "desc": user.desc,"gender": user.gender,"status": user.status,
                         "addressNumber": user.addressNumber, "city": user.city, "country": user.country,
-                        "state":user.state, "zip":user.zip, "phoneNumber":user.phoneNumber}
+                        "state":user.state, "zip":user.zip, "phoneNumber":user.phoneNumber,
+                        "bookingHistory": booking_list}
         else:
             return  {"username":user.username,"firstName": user.firstName,
                     "lastName": user.lastName, "id":user.pk,"hostId":hostData[0].pk,
                     "email":user.email, "profilePhoto": user.profilePhoto, 
                     "desc": user.desc,"gender": user.gender,"status": user.status,
                      "addressNumber": user.addressNumber, "city": user.city, "country": user.country,
-                        "state":user.state, "zip":user.zip, "phoneNumber":user.phoneNumber}
+                        "state":user.state, "zip":user.zip, "phoneNumber":user.phoneNumber,
+                        "bookingHistory": booking_list}
 
+
+    
 # update profile details
 @app.route("/updateProfile", methods = ["PUT"])
 def update_profile():
@@ -298,7 +314,7 @@ def get_hosting_info():
                 "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                     "uploadedPhotos": hostData[0].uploadedPhotos, 
                     'title':hostData[0].title, 'perks': hostData[0].perks, 
-                    "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
+                    "date":r.execute_command(f"smembers available_{hostData[0].pk}")}
 
     except ValidationError as e:
         return json.dumps(str(e)), 401
@@ -311,7 +327,7 @@ def individual_host_info():
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
                 'title':hostData[0].title, 'perks': hostData[0].perks,
-                "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
+                "date":r.execute_command(f"smembers available_{hostData[0].pk}")}
 
 
 @app.route('/ownerInfo', methods = ["POST"])
@@ -357,26 +373,26 @@ def get_cart():
 #     redis.execute_command(f"delete cart_{current_user}")
 #     return("Cart emptied.")
 
-# getting booking
-@app.route('/getBookingHistory', methods=["POST"])
-def bookingHistory():
-    input = request.get_json() 
-    user = input["id"]
-    re = r.execute_command(f'lrange history_{user} 0 -1')
-    
-    booking_list = []
-    for i in re:
-        bookings = Booking.Booking.find(Booking.Booking.pk == i)
-        booking_info = {"hostId": bookings[0].host, "date": bookings[0].date}
-        booking_list.append(booking_info)
-    # bookings = Booking.Booking.find(Booking.Booking.pk == "01HWY98JJCNV4RXNA2K7FQFXWA")
-    return booking_list
 
-#  hosts = Host.Host.find().all()
-#     host_list = []
-#     for i in hosts:
-#         host_list.append(dict(i))
-#     return host_list
+# @app.route('/hostingInfo', methods = ["POST"])
+# def individual_host_info():
+#     input = request.get_json()
+#     hostData = Host.Host.find(Host.Host.pk == input["id"]) 
+#     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
+#                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
+#                 "uploadedPhotos": hostData[0].uploadedPhotos, 
+#                 'title':hostData[0].title, 'perks': hostData[0].perks,
+#                 "date":r.execute_command(f"smembers available_{hostData[0].pk}")}
+
+# getting booking
+# @app.route('/getBookingHistory', methods=["POST"])
+# def bookingHistory():
+#     input = request.get_json() 
+#     host = input["id"]
+#     hostData = Host.Host.find(Host.Host.pk == host) 
+    
+    
+#     return booking_list
 
 # execute booking
 @app.route('/book', methods = ["POST"])

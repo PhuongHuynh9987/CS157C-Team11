@@ -36,8 +36,6 @@ export default function HostInfo(){
                 if (data !== 'Failed'){
                     setRedirect(true)
                 }
-                
-                
             })
     }
 
