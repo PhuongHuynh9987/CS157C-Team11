@@ -56,6 +56,8 @@ app.config['STATIC_FOLDER'] = 'uploads'
 # CORS(app, resources ={r'/*':{'origins': 'http://localhost:5173'},'supports_credentials': True})
 CORS(app, origins = ['http://localhost:5173'], supports_credentials = True )
 
+Migrator().run()
+
 # Api route
 @app.route("/",methods = ["GET"])
 def members():
@@ -96,7 +98,7 @@ def register():
 
     # Check for pre-existing account here
     userData = User.User.find(User.User.username == input["username"])
-    if (userData):
+    if len(list(userData)) != 0:
         return ("Username already exists", 404)
 
     pw_hash = bcrypt.generate_password_hash(input["password"],5).decode('utf-8')
