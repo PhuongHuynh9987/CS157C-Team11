@@ -30,7 +30,6 @@ export default function CheckOut(){
     },[])
 
     useEffect(()=>{
-        console.log("here")
         try {
             axios.post("/getCart", {"cart_id":cart_id}).then(({data})=>{
                 // console.log(data)

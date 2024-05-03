@@ -1,16 +1,41 @@
-import { React,  useContext } from "react";
+import { React,  useContext,useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Link, Navigate, useParams } from "react-router-dom";
 import HostSignUp from "./HostSignup";
 import EditProfile from "./EditProfile";
+import axios from "axios";
 
 export default function UserInfoPage(){
-    const {user,ready,isHost} = useContext(UserContext);
+    const [bookingHistory, setBookingHistory] = useState([]);
+    const [booking, setBooking] = useState([]);
+    const [userId, setUserId] = useState([]);
 
+    const {user,ready,isHost} = useContext(UserContext);
     if (ready && !user){
         return <Navigate to = {'/login'} />
     }
-    // console.log(user)
+
+    useEffect(()=> {
+        if(user){
+            try {
+                axios.post('/getBookingHistory',{"id": user.id}).then(({data}) => {
+                        setBookingHistory(data)
+                        data.forEach(element => {
+                            const booking = axios.post("/hostingInfo", {"id": element.hostId})
+                            setBooking(prev => {
+                                return [...prev, data];
+                            // setBookingHistory(data);
+                            })
+                        });
+                    })
+            } catch(e){
+                console.log(e);
+            }
+        }     
+    },[])
+
+    console.log(booking)
+
     let {subpage} = useParams();
     if (subpage === undefined ){
        subpage = 'profile'

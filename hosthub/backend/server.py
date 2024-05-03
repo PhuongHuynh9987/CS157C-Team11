@@ -59,7 +59,15 @@ CORS(app, origins = ['http://localhost:5173'],supports_credentials = True )
 # Api route
 @app.route("/",methods = ["GET"])
 def members():
-    return 'localhost:5000'+pathName+'1711999951.jpg'
+    # input = request.get_json() 
+    re = r.execute_command(f'lrange history_{"01HTR5V62940GAYVTXSDNTXVQV"} 0 -1')
+    
+    booking_list = []
+    for i in re:
+        bookings = Booking.Booking.find(Booking.Booking.pk == i)
+        booking_list.append(dict(bookings[0]))
+    # bookings = Booking.Booking.find(Booking.Booking.pk == "01HWY98JJCNV4RXNA2K7FQFXWA")
+    return booking_list
 
 
 @app.errorhandler(HTTPException)
@@ -229,7 +237,7 @@ def hosting():
         available = input['available']
 
         for str in available:
-            r.execute_command(f'sadd available_{hostId} "{str}"')
+            r.execute_command(f'sadd available_{hostId} {str}')
 
         return {"host_id": host.pk}
 
@@ -276,6 +284,8 @@ def fetch_allHost():
     for i in hosts:
         host_list.append(dict(i))
     return host_list
+
+
 
 # see hosting info
 @app.route('/hostingInfo', methods = ["GET"])
@@ -347,9 +357,29 @@ def get_cart():
 #     redis.execute_command(f"delete cart_{current_user}")
 #     return("Cart emptied.")
 
+# getting booking
+@app.route('/getBookingHistory', methods=["POST"])
+def bookingHistory():
+    input = request.get_json() 
+    user = input["id"]
+    re = r.execute_command(f'lrange history_{user} 0 -1')
+    
+    booking_list = []
+    for i in re:
+        bookings = Booking.Booking.find(Booking.Booking.pk == i)
+        booking_info = {"hostId": bookings[0].host, "date": bookings[0].date}
+        booking_list.append(booking_info)
+    # bookings = Booking.Booking.find(Booking.Booking.pk == "01HWY98JJCNV4RXNA2K7FQFXWA")
+    return booking_list
+
+#  hosts = Host.Host.find().all()
+#     host_list = []
+#     for i in hosts:
+#         host_list.append(dict(i))
+#     return host_list
+
 # execute booking
 @app.route('/book', methods = ["POST"])
-# @jwt_required()
 def make_booking():
     input = request.get_json()
     user = input["user"]
@@ -388,6 +418,8 @@ def make_booking():
             print(e)
     else:
         return ("Booking failed")
+
+
 
 @app.route('/uploads/<path:filename>', methods = ["GET"])
 def photoDisplay(filename):

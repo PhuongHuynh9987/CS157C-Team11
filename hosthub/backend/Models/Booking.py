@@ -9,3 +9,7 @@ class Booking(JsonModel):
     user: str = Field(index=True)
     host: str
     date: str # booking dates
+
+
+# booking = Booking.find(Booking.pk == "01HWY98JJCNV4RXNA2K7FQFXWA")
+# print(booking[0])

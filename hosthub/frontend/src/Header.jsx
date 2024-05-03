@@ -127,7 +127,7 @@ export default function Header(){
           {user && showList &&  (
             <div className="flex justify-end flow font-medium font-mono">
               <div className="bg-blue-100 p-4 w-60 rounded-xl flex flex-col gap-5" id = "clicked">
-                <Link to="/account/profile" onClick={removeToggle}><h2>Account</h2></Link>
+                <Link to={'/account/profile/'} onClick={removeToggle}><h2>Account</h2></Link>
                 <Link to="/" onClick={removeToggle}><h2>Home</h2></Link>
                 <Link onClick={logout} ><h2>Logout </h2></Link>    
               </div>  
