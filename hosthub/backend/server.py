@@ -108,7 +108,6 @@ def register():
 
 # log into user account
 @app.route("/login",methods = ["POST"])
-# @jwt_required()
 def login():
     input =  request.get_json()
     userData = User.User.find(User.User.username == input["username"])
@@ -170,31 +169,40 @@ def profile():
             return  {"username":user.username,"firstName": user.firstName,
                         "lastName": user.lastName, "id":user.pk, 
                         "email":user.email, "profilePhoto": user.profilePhoto,
-                        "desc": user.desc,"gender": user.gender,"status": user.status}
+                        "desc": user.desc,"gender": user.gender,"status": user.status,
+                        "addressNumber": user.addressNumber, "city": user.city, "country": user.country,
+                        "state":user.state, "zip":user.zip, "phoneNumber":user.phoneNumber}
         else:
             return  {"username":user.username,"firstName": user.firstName,
                     "lastName": user.lastName, "id":user.pk,"hostId":hostData[0].pk,
                     "email":user.email, "profilePhoto": user.profilePhoto, 
-                    "desc": user.desc,"gender": user.gender,"status": user.status}
+                    "desc": user.desc,"gender": user.gender,"status": user.status,
+                     "addressNumber": user.addressNumber, "city": user.city, "country": user.country,
+                        "state":user.state, "zip":user.zip, "phoneNumber":user.phoneNumber}
 
 # update profile details
 @app.route("/updateProfile", methods = ["PUT"])
 def update_profile():
     input = request.get_json()
-    hostData = User.User.find( User.User.pk == input["id"])
+    userData = User.User.find( User.User.pk == input["id"])
     Migrator().run()   
     try: 
         person = User.User(
-            pk = hostData[0].pk,
-            username = hostData[0].username,
+            pk = userData[0].pk,
+            username = userData[0].username,
             firstName =  input["firstName"],
             lastName = input["lastName"],
             email = input["email"],
             profilePhoto = input["uploadedPhoto"],
             desc = input["desc"],
-            password = hostData[0].password,
+            password = userData[0].password,
             gender = input["gender"],
-            status = input["status"]
+            status = input["status"],
+            addressNumber = input["addressNumber"],
+            city = input["city"],
+            state = input["state"],
+            country = input["country"],
+            phoneNumber = input["phoneNumber"],
         )
         person.save()
         return {"user_id": person.pk}
@@ -288,19 +296,18 @@ def fetch_allHost():
 # see hosting info
 @app.route('/hostingInfo', methods = ["GET"])
 def get_hosting_info():
-    verify = verify_jwt_in_request()
-    current_user = get_jwt_identity()
-    hostData = Host.Host.find(Host.Host.owner == current_user) 
-    return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
-               "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
-                "uploadedPhotos": hostData[0].uploadedPhotos, 
-                'title':hostData[0].title, 'perks': hostData[0].perks, 
-                "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
+    try:
+        verify = verify_jwt_in_request()
+        current_user = get_jwt_identity()
+        hostData = Host.Host.find(Host.Host.owner == current_user) 
+        return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
+                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
+                    "uploadedPhotos": hostData[0].uploadedPhotos, 
+                    'title':hostData[0].title, 'perks': hostData[0].perks, 
+                    "available":r.execute_command(f"smembers available_{hostData[0].pk}")}
 
     except ValidationError as e:
         return json.dumps(str(e)), 401
-
-
 
 @app.route('/hostingInfo', methods = ["POST"])
 def individual_host_info():
@@ -326,65 +333,91 @@ def show_cart():
     return {"title":hostData[0].title}
 >>>>>>> Stashed changes
 
+
+@app.route('/ownerInfo', methods = ["POST"])
+def ownerInfo():
+    input = request.get_json()
+    host = Host.Host.find(Host.Host.pk == input["id"]) 
+    return host[0].owner
+
 # add a potential booking to user cart
 @app.route('/addToCart', methods = ["POST"])
 def add_cart():
-    current_user = get_jwt_identity()
-
-    # check for cart hash by user id
-    cart_status = redis.execute_command(f"EXISTS cart_{current_user}")
-
-    # take host id and available time slot
     input = request.get_json()
+    host_id = input["id"]
+    user = input["user"]
+    date = input["date"]
+    
+    hostData = Host.Host.find(Host.Host.owner == user) 
 
-    if cart_status:
-        return ("Cart already occupied.")
+    if len(list(hostData)) != 0 and hostData[0].pk == host_id:
+        return "Failed"
     else:
-        host_id = input["host_id"]
-        available = input["available"]
-        redis.execute_command(f'hmset cart_{current_user} host_id "{host_id}" available "{available}"')
+        r.execute_command(f'hset cart_{user} host_id {host_id} date {date}')
+        return {"cart": 'cart_'+user}
+    
+@app.route('/getCart', methods = ["POST"])
+def get_cart():
+    input = request.get_json()
+    cart_id = input["cart_id"]
+    
+    cart_info = r.execute_command(f'hgetall {cart_id}')
+    hostData = Host.Host.find(Host.Host.pk == cart_info[1]) 
+    owner = User.User.find(User.User.pk == hostData[0].owner) 
+    return {"address":hostData[0].address,
+            "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip,
+            "owner_firstName": owner[0].firstName,
+            "owner_lastName": owner[0].lastName, "date": cart_info[3], "hostId": hostData[0].pk}
+
 
 # empty the user's cart
-@app.route("/clearCart", methods = ["POST"])
-def clear_cart():
-    current_user = get_jwt_identity()
-    redis.execute_command(f"delete cart_{current_user}")
-    return("Cart emptied.")
+# @app.route("/clearCart", methods = ["POST"])
+# def clear_cart():
+#     current_user = get_jwt_identity()
+#     redis.execute_command(f"delete cart_{current_user}")
+#     return("Cart emptied.")
 
 # execute booking
 @app.route('/book', methods = ["POST"])
+# @jwt_required()
 def make_booking():
-    current_user = get_jwt_identity()
-    # check for cart hash by user id
-    cart_status = redis.execute_command(f"EXISTS cart_{current_user}")
+    input = request.get_json()
+    user = input["user"]
 
-    if cart_status:
+    # check for cart hash by user id
+    cart_status = r.execute_command(f"EXISTS cart_{user}")
+
+    if cart_status == 1:
         try:
-            host_id = redis.execute_command(f'hget cart_{current_user} host_id')
-            date = redis.execute_command(f'hget cart_{current_user} available')
+            host_id = r.execute_command(f'hget cart_{user} host_id')
+            date = r.execute_command(f'hget cart_{user} date')
 
             # create booking
             booking = Booking.Booking(
-                user = current_user,
+                user = user,
                 host = host_id,
-                available = date
+                date = date
             )
             booking.save()
-
+            
             # add booking to history for user and host
             try: 
-                redis.execute_command(f'lpush history_{current_user} "{booking.pk}"')
-                redis.execute_command(f'lpush history_{host_id} "{booking.pk}"')
+                r.execute_command(f'lpush history_{user} {booking.pk}')
+                r.execute_command(f'lpush history_{host_id} {booking.pk}')
                
                 # remove from availabilities on booking
-                redis.execute_command(f'srem available_{host_id} "{date}"')
-                return("Booking complete")
+                r.execute_command(f'srem available_{host_id} {date}')
+                # delete cart
+                r.execute_command(f"del cart_{user}")
+
+                # history = r.execute_command(f'lrange history_{host_id} 0 -1')
+                return {"booking_id": booking.pk}
             except Exception as e:
                 print(e)
-
         except Exception as e:
             print(e)
-    return ("Booking failed")
+    else:
+        return ("Booking failed")
 
 @app.route('/uploads/<path:filename>', methods = ["GET"])
 def photoDisplay(filename):
