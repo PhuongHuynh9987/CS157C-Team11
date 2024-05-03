@@ -38,7 +38,7 @@ export function UserContextProvider({children}){
     },[])
 
     return (
-        <UserContext.Provider value = {{user, setUser,ready,isHost,setIsHost}}>
+        <UserContext.Provider value = {{user, setUser,ready,isHost,setIsHost,setReady}}>
             {children}
         </UserContext.Provider>
     )

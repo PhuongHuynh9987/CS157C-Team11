@@ -280,6 +280,7 @@ def hosting_update():
             zip = input["zip"],
             uploadedPhotos = input["uploadedPhotos"],
             perks = input["perks"],
+            date = input["available"],
         )
         host.save()
         # take input of availabilities and add to available_{host_id} set
