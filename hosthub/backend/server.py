@@ -63,11 +63,14 @@ def members():
     re = r.execute_command(f'lrange history_{"01HTR5V62940GAYVTXSDNTXVQV"} 0 -1')
     
     booking_list = []
-    for i in re:
-        bookings = Booking.Booking.find(Booking.Booking.pk == i)
-        booking_list.append(dict(bookings[0]))
+    if len(re) == 1:
+        for i in re:
+            bookings = Booking.Booking.find(Booking.Booking.pk == i)
+            booking_list.append(dict(bookings[0]))
+        return "he"
+    else:
     # bookings = Booking.Booking.find(Booking.Booking.pk == "01HWY98JJCNV4RXNA2K7FQFXWA")
-    return booking_list
+        return booking_list
 
 
 @app.errorhandler(HTTPException)
@@ -174,10 +177,11 @@ def profile():
         #Getting booking history
         re = r.execute_command(f'lrange history_{current_user} 0 -1')
         booking_list = []
-        for i in re:
-            bookings = Booking.Booking.find(Booking.Booking.pk == i)
-            booking_info = {"hostId": bookings[0].host, "date": bookings[0].date}
-            booking_list.append(booking_info)
+        if len(re) == 1:
+            for i in re:
+                bookings = Booking.Booking.find(Booking.Booking.pk == i)
+                booking_list.append(dict(bookings[0]))
+        # bookings = Booking.Booking.find(Booking.Booking.pk == "01HWY98JJCNV4RXNA2K7FQFXWA")
 
         # Getting user and host information 
         userData = User.User.find(User.User.pk == current_user)
