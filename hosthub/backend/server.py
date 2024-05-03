@@ -268,6 +268,22 @@ def hosting_update():
     except ValidationError as e:
             print(e)
 
+<<<<<<< Updated upstream
+=======
+# add availabilities
+#@app.route("/addAvailability", methods = ["PUT"])
+#def add_availability():
+    # input = request.get_
+
+    # # take input of availabilities and add to available_{host_id} set
+    # available = input['available']
+
+    # for str in available:
+    #     r.execute_command(f'sadd available_{hostId} "{str}"')
+    # return {"host_id": host.pk}
+
+
+>>>>>>> Stashed changes
 # see all hostings
 @app.route('/fetch_allHost', methods = ["GET"])
 def fetch_allHost():
