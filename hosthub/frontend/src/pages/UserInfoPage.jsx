@@ -26,12 +26,12 @@ export default function UserInfoPage(){
     },[])
 
     function getBooking (bookingHistory){
+        if(booking.length === 0)
             bookingHistory.forEach(element => {
                 setDate(prev => {
                     return [...prev, element.date];
                 })
                 axios.post("/hostingInfo", {"id": element.hostId}).then(({data})=>{
-                    // setBooking(data)
                     setBooking(prev => {
                         return [...prev, data];
                     })
