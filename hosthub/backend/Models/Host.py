@@ -31,7 +31,8 @@ class Host(JsonModel):
 # host.save()
 # Migrator().run()
 
-# host = Host.find(Host.owner == '01HTDDNEVB6GJW94WVYFQF69JY')
+# host = Host.find(Host.pk == "01HVCVQPT47HZXN00QRMGVX9TM")
+# print(host[0])
 # host.desc = "Lorem ipsum!!!"
 # host.save()
 

@@ -59,18 +59,10 @@ CORS(app, origins = ['http://localhost:5173'], supports_credentials = True )
 # Api route
 @app.route("/",methods = ["GET"])
 def members():
-    # input = request.get_json() 
-    re = r.execute_command(f'lrange history_{"01HTR5V62940GAYVTXSDNTXVQV"} 0 -1')
+    re = r.execute_command(f'lrange history_01HTR5V62940GAYTXSDNTXVQV 0 -1')
+  
+    return {"hi":len(re) > 0}
     
-    booking_list = []
-    if len(re) == 1:
-        for i in re:
-            bookings = Booking.Booking.find(Booking.Booking.pk == i)
-            booking_list.append(dict(bookings[0]))
-        return "he"
-    else:
-    # bookings = Booking.Booking.find(Booking.Booking.pk == "01HWY98JJCNV4RXNA2K7FQFXWA")
-        return booking_list
 
 
 @app.errorhandler(HTTPException)
@@ -177,12 +169,10 @@ def profile():
         #Getting booking history
         re = r.execute_command(f'lrange history_{current_user} 0 -1')
         booking_list = []
-        if len(re) == 1:
+        if len(re) > 0:
             for i in re:
                 bookings = Booking.Booking.find(Booking.Booking.pk == i)
                 booking_list.append(dict(bookings[0]))
-        # bookings = Booking.Booking.find(Booking.Booking.pk == "01HWY98JJCNV4RXNA2K7FQFXWA")
-
         # Getting user and host information 
         userData = User.User.find(User.User.pk == current_user)
         user = userData[0]
@@ -370,34 +360,22 @@ def get_cart():
             "owner_firstName": owner[0].firstName,
             "owner_lastName": owner[0].lastName, "date": cart_info[3], "hostId": hostData[0].pk}
 
-
-# empty the user's cart
-# @app.route("/clearCart", methods = ["POST"])
-# def clear_cart():
-#     current_user = get_jwt_identity()
-#     redis.execute_command(f"delete cart_{current_user}")
-#     return("Cart emptied.")
-
-
-# @app.route('/hostingInfo', methods = ["POST"])
-# def individual_host_info():
-#     input = request.get_json()
-#     hostData = Host.Host.find(Host.Host.pk == input["id"]) 
-#     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
-#                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
-#                 "uploadedPhotos": hostData[0].uploadedPhotos, 
-#                 'title':hostData[0].title, 'perks': hostData[0].perks,
-#                 "date":r.execute_command(f"smembers available_{hostData[0].pk}")}
-
 # getting booking
 # @app.route('/getBookingHistory', methods=["POST"])
 # def bookingHistory():
 #     input = request.get_json() 
-#     host = input["id"]
-#     hostData = Host.Host.find(Host.Host.pk == host) 
+#     host = input["booking"]
+#     list_of_host = list(host.values())[1]
+#     return list_of_host
+#     # host_list = []
+#     # for i in list_of_host:
+#     #     # bookings = Booking.Booking.find(Booking.Booking.pk == i)
+#     #     # booking_list.append(dict(bookings[0]))
+#     #     hostData = Host.Host.find(Host.Host.pk == i)
+#     #     host_list.append(hostData[0])
+#     # return host_list
     
-    
-#     return booking_list
+
 
 # execute booking
 @app.route('/book', methods = ["POST"])

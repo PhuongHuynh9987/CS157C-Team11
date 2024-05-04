@@ -19,6 +19,7 @@ export default function UserInfoPage(){
             axios.get('/profile').then(({data})=>{
                 setUserId(data.id);
                 getBooking(data.bookingHistory) 
+                console.log(data)
             })
         }catch(e){
                 console.log(e);
@@ -26,12 +27,13 @@ export default function UserInfoPage(){
     },[])
 
     function getBooking (bookingHistory){
-        if(booking.length === 0)
+        // if(booking.length === 0)
             bookingHistory.forEach(element => {
                 setDate(prev => {
                     return [...prev, element.date];
                 })
-                axios.post("/hostingInfo", {"id": element.hostId}).then(({data})=>{
+                axios.post("/hostingInfo", {"id": element.host}).then(({data})=>{
+                    
                     setBooking(prev => {
                         return [...prev, data];
                     })
@@ -40,6 +42,7 @@ export default function UserInfoPage(){
            });
     }
 
+  
     let {subpage} = useParams();
     if (subpage === undefined ){
        subpage = 'profile'
