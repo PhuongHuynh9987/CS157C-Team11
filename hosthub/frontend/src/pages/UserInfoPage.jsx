@@ -8,6 +8,7 @@ import axios from "axios";
 export default function UserInfoPage(){
     const [date, setDate] = useState([]);
     const [booking, setBooking] = useState([]);
+    const [bookingH, setBookingH] = useState([]);
     const [userId, setUserId] = useState([]);
 
     const {user,ready,isHost} = useContext(UserContext);
@@ -15,30 +16,48 @@ export default function UserInfoPage(){
         return <Navigate to = {'/login'} />
     }
     useEffect(() =>{
-        try {
-            axios.get('/profile').then(({data})=>{
-                setUserId(data.id);
-                getBooking(data.bookingHistory) 
-            })
-        }catch(e){
+        if(user){
+            try{
+                axios.post("/getBookingHistory", {"booking": user.bookingHistory}).then(({data})=>{
+                                console.log(data)
+                                setBooking(data.hostList);
+                 })        
+            }catch(e){
                 console.log(e);
             }
-    },[])
-
-    function getBooking (bookingHistory){
-        if(booking.length === 0)
-            bookingHistory.forEach(element => {
-                setDate(prev => {
-                    return [...prev, element.date];
-                })
-                axios.post("/hostingInfo", {"id": element.hostId}).then(({data})=>{
-                    setBooking(prev => {
-                        return [...prev, data];
-                    })
-                })
+        }
+        // try {
+        //     axios.get('/profile').then(({data})=>{
+        //         setUserId(data.id);
+        //         setBookingH(data.bookingHistory)
+        //         // getBooking(data.bookingHistory) 
+        //     })
+        // }catch(e){
+        //         console.log(e);
+        // }
+    },[user,ready])
+console.log(booking);
+//    if(userId && bookingH){
+//         axios.post("/getBookingHistory", {"booking": bookingH }).then(({data})=>{
+//             console.log(data)
+//             setBooking(data);
+//     })
+//    }
+    
+    // function getBooking (bookingHistory){
+    //     if(booking.length === 0)
+    //         bookingHistory.forEach(element => {
+    //             setDate(prev => {
+    //                 return [...prev, element.date];
+    //             })
+    //             axios.post("/hostingInfo", {"id": element.hostId}).then(({data})=>{
+    //                 setBooking(prev => {
+    //                     return [...prev, data];
+    //                 })
+    //             })
                    
-           });
-    }
+    //        });
+    // }
 
     let {subpage} = useParams();
     if (subpage === undefined ){
@@ -97,19 +116,19 @@ export default function UserInfoPage(){
                     <h2 className="font-bold text-2xl mb-2 text-blue-500">Stay history</h2>
                     <hr className="mx-auto bg-gray-200 border-0 rounded"/>
                   
-                   {booking.length > 0 && booking.map((host,key) =>(
+                   {booking?.length > 0 && booking?.map((host,key) =>(
                         <div className="text-left p-5 rounded-xl" key = {key}>
                             <h1 className="text-xl font-bold">{host.title}</h1>
                             <div className="flex gap-5 my-5">
-                                <img className="w-1/4 rounded-xl aspect-square object-cover" src={'http://localhost:5000/uploads/'+host.uploadedPhotos[0]} alt="" />
+                                <img className="w-1/4 rounded-xl aspect-square object-cover" src={'http://localhost:5000/uploads/'+host.photo} alt="" />
                                 <div>
                                     <p>{host.desc}</p>
                                     <div className="flex gap-4 my-2">
-                                        <h2>{date[key].slice(0,10)}</h2>
+                                        <h2>{host.date.slice(0,10)}</h2>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                                         </svg>
-                                        <h2>{date[key].slice(11,21)}</h2>
+                                        <h2>{host.date.slice(11,21)}</h2>
                                     </div>
                                     
                                 </div>

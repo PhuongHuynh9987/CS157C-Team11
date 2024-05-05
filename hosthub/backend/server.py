@@ -386,14 +386,17 @@ def get_cart():
 #                 "date":r.execute_command(f"smembers available_{hostData[0].pk}")}
 
 # getting booking
-# @app.route('/getBookingHistory', methods=["POST"])
-# def bookingHistory():
-#     input = request.get_json() 
-#     host = input["id"]
-#     hostData = Host.Host.find(Host.Host.pk == host) 
-    
-    
-#     return booking_list
+@app.route('/getBookingHistory', methods=["POST"])
+def bookingHistory():
+    input = request.get_json() 
+    host = input["booking"]
+    hostList = []
+    for i in host:
+        hostData= Host.Host.find(Host.Host.pk == i["hostId"]) 
+        booking_info = {"title":hostData[0].title ,"desc" :hostData[0].desc,
+         "photo":hostData[0].uploadedPhotos[0], "date": i["date"]}
+        hostList.append(booking_info)
+    return {"hostList": hostList}
 
 # execute booking
 @app.route('/book', methods = ["POST"])
