@@ -471,7 +471,7 @@ def upload_file():
 ###########################
 
 def insert_dummy_users():
-    with open(r'hosthub\backend\sample_users.csv', newline='') as csvfile:
+    with open(r'sample_users.csv', newline='') as csvfile:
         data = list(csv.reader(csvfile))
 
     # ['username', 'firstName', 'lastName', 'email', 'addressNumber', 'city',
@@ -480,9 +480,6 @@ def insert_dummy_users():
     data.remove(data[0]) # remove heading
 
     for d in data:
-        eilic = User.User.find(User.User.username == "eilic") 
-        if eilic[0].username == "eilic":
-            return
 
         pw_hash = bcrypt.generate_password_hash(d[12],5).decode('utf-8')
         person = User.User(
@@ -506,7 +503,7 @@ def insert_dummy_users():
     print("Dummy User Data Generated!")
 
 def insert_dummy_hosts():
-    with open(r'hosthub\backend\sample_hosts.csv', newline='') as csvfile:
+    with open(r'sample_hosts.csv', newline='') as csvfile:
         data = list(csv.reader(csvfile))
 
     # owner	 title	desc	address 	city	state	zip	 uploadedPhotos	 perks
@@ -529,11 +526,15 @@ def insert_dummy_hosts():
             perks = d[8].split()
         )
         host.save()
+
     print("Dummy Host Data Generated!")
 
 if __name__ == "__main__":
-    insert_dummy_users()
-    insert_dummy_hosts()
+
+    eilic = User.User.find(User.User.username == "eilic") 
+    if len(list(eilic)) == 0:
+        insert_dummy_users()
+        insert_dummy_hosts()
 
     app.run(debug=True, port = 5000, host = "localhost")
     
