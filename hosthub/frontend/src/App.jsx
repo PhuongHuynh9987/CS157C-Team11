@@ -17,8 +17,6 @@ import { UserContextProvider } from "./UserContext.jsx";
 import HostSignUp from "./pages/HostSignup.jsx"
 import EditProfile from "./pages/EditProfile.jsx"
 import CheckOut from "./pages/checkOut.jsx";
-import React from 'react';
-
 
 axios.defaults.baseURL = "http://localhost:5000";
 axios.defaults.withCredentials = true;
@@ -33,6 +31,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/account/:subpage" element={<UserInfoPage />} />
+            {/* <Route path="/account/:subpage" element={<UserInfoPage />} /> */}
             <Route path="/hostpage/:id" element={<HostInfo />} />
             <Route path="/hostSignup" element={<HostSignUp />} />
             <Route path="/editProfile" element={<EditProfile />} />

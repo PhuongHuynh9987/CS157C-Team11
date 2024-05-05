@@ -1,6 +1,5 @@
 import { Link ,Navigate} from "react-router-dom"
 import Map from "../Map.jsx"
-import React from 'react';
 
 import {useContext, useEffect, useState} from "react";
 import axios from "axios";

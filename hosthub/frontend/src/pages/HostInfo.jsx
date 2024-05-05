@@ -7,7 +7,7 @@ import kitchen from "../assets/kitchen-set-solid.svg"
 import groceries from "../assets/groceries-svgrepo-com.svg"
 import pets from "../assets/pets.svg"
 import { UserContext } from "../UserContext.jsx";
-import React from 'react';
+
 
 export default function HostInfo(){
     const {user,ready,isHost} = useContext(UserContext);
@@ -17,6 +17,7 @@ export default function HostInfo(){
     const hostId = useParams().id;
     const [redirect, setRedirect] = useState('');
     const [cart, setCart] = useState('')
+  
 
     useEffect(()=>{
         axios.post("/hostingInfo", {"id":hostId}).then(({data})=>{
@@ -35,8 +36,6 @@ export default function HostInfo(){
                 if (data !== 'Failed'){
                     setRedirect(true)
                 }
-                
-                
             })
     }
 
@@ -89,7 +88,7 @@ export default function HostInfo(){
 
                     <h1 className="my-10 text-2xl font-bold">Availability</h1>
   
-                   {host.available?.length > 0 && host.available.map((date,key) => (
+                   {host.date?.length > 0 && host.date.map((date,key) => (
                      <div className="flex flex-col gap-3 " key={key}>
                         <div className="flex gap-16 items-center border border-2 px- py-3 justify-center rounded-2xl">
                             <div>

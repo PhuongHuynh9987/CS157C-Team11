@@ -1,7 +1,7 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
-import React from 'react';
+import React from "react";
+
 
 export const UserContext = createContext({})
 
@@ -33,13 +33,12 @@ export function UserContextProvider({children}){
                 console.error(e)
                 return e;
             }
-
         }
 
     },[])
 
     return (
-        <UserContext.Provider value = {{user, setUser,ready,isHost,setIsHost, setReady}}>
+        <UserContext.Provider value = {{user, setUser,ready,isHost,setIsHost,setReady}}>
             {children}
         </UserContext.Provider>
     )
