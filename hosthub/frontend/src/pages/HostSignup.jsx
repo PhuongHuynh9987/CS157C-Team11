@@ -55,7 +55,7 @@ export default function HostSignUp(){
                 setUploadedPhotos(data.uploadedPhotos)
                 setDesc(data.desc)
                 setPerks(data.perks)
-                setAvailable(data.available)
+                setAvailable(data.date)
             })
             if (!user){
                 <Navigate to = {'/login'} />
@@ -95,6 +95,7 @@ export default function HostSignUp(){
 
         else {
             try {
+                console.log(available);
                 await axios.put('/host', {
                     id,
                     title,
@@ -114,9 +115,6 @@ export default function HostSignUp(){
             }
         }
     }
-    console.log(perks)
-
-    
 
     if (redirect){
         return <Navigate to ={'/account/profile'} />
@@ -165,11 +163,16 @@ export default function HostSignUp(){
 
     function updateAvailability(ev){
         ev.preventDefault();
-        let date = [fromDate, toDate,cost]
-        if (available !== undefined)
+        let date = [fromDate, toDate, cost]
+        
+        if (available !== undefined){
             setAvailable([...available,date.join()])
-        else
-            setAvailable([date.join()])
+        }
+
+        else {
+            setAvailable([date.join()]);
+        }
+        
         setFromDate('')
         setToDate('')
         setAvailability(false)
@@ -180,9 +183,6 @@ export default function HostSignUp(){
         ev.preventDefault()
         setAvailable(available.filter((item) => item !== data));
     }
-
-
-    console.log(perks)
 
     function showCalenda(ev){
         ev.preventDefault();
@@ -310,7 +310,6 @@ export default function HostSignUp(){
 
                 {availability && (
                     <div className="flex gap-5">
-                  
                         <input type="date" value = {fromDate} onChange={ev => setFromDate(ev.target.value)}/>
                         <input type="date"   value = {toDate} onChange={ev => setToDate(ev.target.value)}/>
                         <input type="text" className="pl-2" value ={cost} onChange={ev => setCost(ev.target.value)}/>
