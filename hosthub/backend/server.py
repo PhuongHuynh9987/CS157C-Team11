@@ -538,9 +538,9 @@ def insert_dummy_hosts():
 if __name__ == "__main__":
 
     eilic = User.User.find(User.User.username == "eilic") 
-    #if len(list(eilic)) == 0:
-    insert_dummy_users()
-    insert_dummy_hosts()
+    if len(list(eilic)) == 0:
+        insert_dummy_users()
+        insert_dummy_hosts()
 
     app.run(debug=True, port = 5000, host = "localhost")
     
