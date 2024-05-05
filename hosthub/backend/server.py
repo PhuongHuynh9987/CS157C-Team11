@@ -471,7 +471,7 @@ def upload_file():
 ###########################
 
 def insert_dummy_users():
-    with open(r'sample_users.csv', newline='') as csvfile:
+    with open(r'sample_users_final.csv', newline='') as csvfile:
         data = list(csv.reader(csvfile))
 
     # ['username', 'firstName', 'lastName', 'email', 'addressNumber', 'city',
@@ -481,7 +481,7 @@ def insert_dummy_users():
 
     for d in data:
 
-        pw_hash = bcrypt.generate_password_hash(d[12],5).decode('utf-8')
+        pw_hash = bcrypt.generate_password_hash(d[11],5).decode('utf-8')
         person = User.User(
             username = d[0],
             firstName =  d[1],
@@ -496,23 +496,25 @@ def insert_dummy_users():
             phoneNumber = d[9],
             desc = d[10],
             profilePhoto = d[12],
-            gender = d[1]
+            gender = d[13]
         )
         person.save()
 
     print("Dummy User Data Generated!")
 
 def insert_dummy_hosts():
-    with open(r'sample_hosts.csv', newline='') as csvfile:
+    with open(r'sample_hosts_final.csv', newline='') as csvfile:
         data = list(csv.reader(csvfile))
 
-    # owner	 title	desc	address 	city	state	zip	 uploadedPhotos	 perks
+    # owner	 title	desc	address 	city	state	zip	 uploadedPhotos	 perks availabilities
 
     data.remove(data[0]) # remove heading
 
     for d in data:
         host_owner = User.User.find(User.User.username == d[0]) 
         owner_id = host_owner[0].pk
+
+        available = d[9].split(" + ")
 
         host = Host.Host(
             owner = owner_id,
@@ -523,18 +525,22 @@ def insert_dummy_hosts():
             state = d[5],
             zip = d[6],
             uploadedPhotos = [d[7]],
-            perks = d[8].split()
+            perks = d[8].split("+")
         )
         host.save()
+        hostId = host.pk
+
+        for str in available:
+            r.execute_command(f'sadd available_{hostId} {str}')
 
     print("Dummy Host Data Generated!")
 
 if __name__ == "__main__":
 
     eilic = User.User.find(User.User.username == "eilic") 
-    if len(list(eilic)) == 0:
-        insert_dummy_users()
-        insert_dummy_hosts()
+    #if len(list(eilic)) == 0:
+    insert_dummy_users()
+    insert_dummy_hosts()
 
     app.run(debug=True, port = 5000, host = "localhost")
     
