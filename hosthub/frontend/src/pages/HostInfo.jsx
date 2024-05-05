@@ -88,7 +88,7 @@ export default function HostInfo(){
 
                     <h1 className="my-10 text-2xl font-bold">Availability</h1>
   
-                   {host.available?.length > 0 && host.available.map((date,key) => (
+                   {host.date?.length > 0 && host.date.map((date,key) => (
                      <div className="flex flex-col gap-3 " key={key}>
                         <div className="flex gap-16 items-center border border-2 px- py-3 justify-center rounded-2xl">
                             <div>

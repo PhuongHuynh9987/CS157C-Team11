@@ -166,7 +166,10 @@ export default function HostSignUp(){
     function updateAvailability(ev){
         ev.preventDefault();
         let date = [fromDate, toDate,cost]
-        setAvailable([...available,date.join()])
+        if (available !== undefined)
+            setAvailable([...available,date.join()])
+        else
+            setAvailable([date.join()])
         setFromDate('')
         setToDate('')
         setAvailability(false)
