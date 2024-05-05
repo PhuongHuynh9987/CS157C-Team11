@@ -22,6 +22,7 @@ from datetime import datetime,timedelta,timezone
 from werkzeug.utils import secure_filename
 import requests
 import json
+import csv
 
 # from redis.cluster import RedisCluster
 
@@ -465,5 +466,75 @@ def upload_file():
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
     return file.filename
 
+###########################
+### DUMMY DATA CREATION ###
+###########################
+
+def insert_dummy_users():
+    with open(r'hosthub\backend\sample_users.csv', newline='') as csvfile:
+        data = list(csv.reader(csvfile))
+
+    # ['username', 'firstName', 'lastName', 'email', 'addressNumber', 'city',
+    # 'country', 'state', 'zip', 'phoneNumber', 'desc', 'password', 'profilePhoto', 'gender']
+
+    data.remove(data[0]) # remove heading
+
+    for d in data:
+        eilic = User.User.find(User.User.username == "eilic") 
+        if eilic[0].username == "eilic":
+            return
+
+        pw_hash = bcrypt.generate_password_hash(d[12],5).decode('utf-8')
+        person = User.User(
+            username = d[0],
+            firstName =  d[1],
+            lastName = d[2],
+            email =  d[3],
+            password = pw_hash,
+            addressNumber = d[4],
+            city = d[5],
+            country = d[6],
+            state = d[7],
+            zip = d[8],
+            phoneNumber = d[9],
+            desc = d[10],
+            profilePhoto = d[12],
+            gender = d[1]
+        )
+        person.save()
+
+    print("Dummy User Data Generated!")
+
+def insert_dummy_hosts():
+    with open(r'hosthub\backend\sample_hosts.csv', newline='') as csvfile:
+        data = list(csv.reader(csvfile))
+
+    # owner	 title	desc	address 	city	state	zip	 uploadedPhotos	 perks
+
+    data.remove(data[0]) # remove heading
+
+    for d in data:
+        host_owner = User.User.find(User.User.username == d[0]) 
+        owner_id = host_owner[0].pk
+
+        host = Host.Host(
+            owner = owner_id,
+            title = d[1],
+            desc = d[2],
+            address = d[3],
+            city = d[4],
+            state = d[5],
+            zip = d[6],
+            uploadedPhotos = [d[7]],
+            perks = d[8].split()
+        )
+        host.save()
+
+    print("Dummy Host Data Generated!")
+
 if __name__ == "__main__":
+    insert_dummy_users()
+    insert_dummy_hosts()
+    
     app.run(debug=True, port = 5000, host = "localhost")
+    
