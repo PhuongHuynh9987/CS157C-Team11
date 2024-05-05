@@ -529,12 +529,11 @@ def insert_dummy_hosts():
             perks = d[8].split()
         )
         host.save()
-
     print("Dummy Host Data Generated!")
 
 if __name__ == "__main__":
     insert_dummy_users()
     insert_dummy_hosts()
-    
+
     app.run(debug=True, port = 5000, host = "localhost")
     
