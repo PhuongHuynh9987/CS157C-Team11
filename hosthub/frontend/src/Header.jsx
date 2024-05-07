@@ -33,6 +33,9 @@ export default function Header(){
 
   function removeToggle(){
     if (showList === true) setShowList(false);
+  }
+
+  function refresh(){
     navigate('/', { state: null });
     navigate(0)
   }
@@ -52,12 +55,8 @@ export default function Header(){
     ev.preventDefault();
     const searchAvailability = [fromDate,toDate].join();
     axios.post('/searchingDate', {"date":searchAvailability}).then(({data}) => {
-      console.log(data);
-      // if( data.length !== 0 ){    
         navigate('/', { state: {host:data } });
         navigate(0)
-      // }
-
     })
   }
 
@@ -66,7 +65,7 @@ export default function Header(){
           <header className="flex items-center justify-between gap-6 mx-4" >
               <div className="flex items-center justify-center">
               <Link to= {"/"} className="flex gap-1 items-center">   
-                <div onClick={removeToggle}>
+                <div onClick={refresh}>
                   <img className="object-cover w-44" src={img} />
                 </div>
               </Link> 
