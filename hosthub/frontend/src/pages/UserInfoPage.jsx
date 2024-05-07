@@ -6,12 +6,9 @@ import EditProfile from "./EditProfile";
 import axios from "axios";
 
 export default function UserInfoPage(){
-    const [date, setDate] = useState([]);
     const [booking, setBooking] = useState([]);
-    const [bookingH, setBookingH] = useState([]);
-    const [userId, setUserId] = useState([]);
-
     const {user,ready,isHost} = useContext(UserContext);
+    
     if (ready && !user){
         return <Navigate to = {'/login'} />
     }
@@ -26,38 +23,7 @@ export default function UserInfoPage(){
                 console.log(e);
             }
         }
-        // try {
-        //     axios.get('/profile').then(({data})=>{
-        //         setUserId(data.id);
-        //         setBookingH(data.bookingHistory)
-        //         // getBooking(data.bookingHistory) 
-        //     })
-        // }catch(e){
-        //         console.log(e);
-        // }
     },[user,ready])
-console.log(booking);
-//    if(userId && bookingH){
-//         axios.post("/getBookingHistory", {"booking": bookingH }).then(({data})=>{
-//             console.log(data)
-//             setBooking(data);
-//     })
-//    }
-    
-    // function getBooking (bookingHistory){
-    //     if(booking.length === 0)
-    //         bookingHistory.forEach(element => {
-    //             setDate(prev => {
-    //                 return [...prev, element.date];
-    //             })
-    //             axios.post("/hostingInfo", {"id": element.hostId}).then(({data})=>{
-    //                 setBooking(prev => {
-    //                     return [...prev, data];
-    //                 })
-    //             })
-                   
-    //        });
-    // }
 
     let {subpage} = useParams();
     if (subpage === undefined ){
