@@ -22,6 +22,7 @@ from datetime import datetime,timedelta,timezone
 from werkzeug.utils import secure_filename
 import requests
 import json
+import csv
 
 # from redis.cluster import RedisCluster
 
@@ -55,6 +56,8 @@ app.config['STATIC_FOLDER'] = 'uploads'
 ######### enable Cors
 # CORS(app, resources ={r'/*':{'origins': 'http://localhost:5173'},'supports_credentials': True})
 CORS(app, origins = ['http://localhost:5173'], supports_credentials = True )
+
+Migrator().run()
 
 # Api route
 @app.route("/",methods = ["GET"])
@@ -96,7 +99,7 @@ def register():
 
     # Check for pre-existing account here
     userData = User.User.find(User.User.username == input["username"])
-    if (userData):
+    if len(list(userData)) != 0:
         return ("Username already exists", 404)
 
     pw_hash = bcrypt.generate_password_hash(input["password"],5).decode('utf-8')
@@ -252,6 +255,8 @@ def hosting():
         host.save()
         available = input['available']
 
+        hostId = host.pk
+
         for str in available:
             r.execute_command(f'sadd available_{hostId} {str}')
 
@@ -280,7 +285,6 @@ def hosting_update():
             zip = input["zip"],
             uploadedPhotos = input["uploadedPhotos"],
             perks = input["perks"],
-            date = input["available"],
         )
         host.save()
         # take input of availabilities and add to available_{host_id} set
@@ -302,8 +306,6 @@ def fetch_allHost():
         host_list.append(dict(i))
     return host_list
 
-
-
 # see hosting info
 @app.route('/hostingInfo', methods = ["GET"])
 def get_hosting_info():
@@ -311,11 +313,13 @@ def get_hosting_info():
         verify = verify_jwt_in_request()
         current_user = get_jwt_identity()
         hostData = Host.Host.find(Host.Host.owner == current_user) 
+        hostId = hostData[0].pk
+        print(r.execute_command(f"smembers available_{hostId}"))
         return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                 "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                     "uploadedPhotos": hostData[0].uploadedPhotos, 
                     'title':hostData[0].title, 'perks': hostData[0].perks, 
-                    "date":r.execute_command(f"smembers available_{hostData[0].pk}")}
+                    "date":r.execute_command(f"smembers available_{hostId}")}
 
     except ValidationError as e:
         return json.dumps(str(e)), 401
@@ -384,6 +388,16 @@ def get_cart():
 #                 "uploadedPhotos": hostData[0].uploadedPhotos, 
 #                 'title':hostData[0].title, 'perks': hostData[0].perks,
 #                 "date":r.execute_command(f"smembers available_{hostData[0].pk}")}
+
+# getting booking
+# @app.route('/getBookingHistory', methods=["POST"])
+# def bookingHistory():
+#     input = request.get_json() 
+#     host = input["id"]
+#     hostData = Host.Host.find(Host.Host.pk == host) 
+    
+    
+#     return booking_list
 
 # getting booking
 @app.route('/getBookingHistory', methods=["POST"])
@@ -465,5 +479,81 @@ def upload_file():
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
     return file.filename
 
+###########################
+### DUMMY DATA CREATION ###
+###########################
+
+def insert_dummy_users():
+    with open(r'sample_users_final.csv', newline='') as csvfile:
+        data = list(csv.reader(csvfile))
+
+    # ['username', 'firstName', 'lastName', 'email', 'addressNumber', 'city',
+    # 'country', 'state', 'zip', 'phoneNumber', 'desc', 'password', 'profilePhoto', 'gender']
+
+    data.remove(data[0]) # remove heading
+
+    for d in data:
+
+        pw_hash = bcrypt.generate_password_hash(d[11],5).decode('utf-8')
+        person = User.User(
+            username = d[0],
+            firstName =  d[1],
+            lastName = d[2],
+            email =  d[3],
+            password = pw_hash,
+            addressNumber = d[4],
+            city = d[5],
+            country = d[6],
+            state = d[7],
+            zip = d[8],
+            phoneNumber = d[9],
+            desc = d[10],
+            profilePhoto = d[12],
+            gender = d[13]
+        )
+        person.save()
+
+    print("Dummy User Data Generated!")
+
+def insert_dummy_hosts():
+    with open(r'sample_hosts_final.csv', newline='') as csvfile:
+        data = list(csv.reader(csvfile))
+
+    # owner	 title	desc	address 	city	state	zip	 uploadedPhotos	 perks availabilities
+
+    data.remove(data[0]) # remove heading
+
+    for d in data:
+        host_owner = User.User.find(User.User.username == d[0]) 
+        owner_id = host_owner[0].pk
+
+        available = d[9].split(" + ")
+
+        host = Host.Host(
+            owner = owner_id,
+            title = d[1],
+            desc = d[2],
+            address = d[3],
+            city = d[4],
+            state = d[5],
+            zip = d[6],
+            uploadedPhotos = [d[7]],
+            perks = d[8].split("+")
+        )
+        host.save()
+        hostId = host.pk
+
+        for str in available:
+            r.execute_command(f'sadd available_{hostId} {str}')
+
+    print("Dummy Host Data Generated!")
+
 if __name__ == "__main__":
+
+    eilic = User.User.find(User.User.username == "eilic") 
+    if len(list(eilic)) == 0:
+        insert_dummy_users()
+        insert_dummy_hosts()
+
     app.run(debug=True, port = 5000, host = "localhost")
+    

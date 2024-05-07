@@ -1,0 +1,24 @@
+username,firstName,lastName,email,addressNumber,city,country,state,zip,phoneNumber,desc,password,profilePhoto,gender
+eilic,Elena,Ilic,eilic@eilic.com,88 E San Carlos St,San Jose,USA,California,95112,(555)-555-5555,Currently a senior at SJSU! Not picky.,password1,defaultprofile.png,F
+phuynh,Phuong,Huynh,phuynh@phuynh.com,181 E Santa Clara St,San Jose,USA,California,95113,(555)-555-5556,CS student at SJSU.,password2,defaultprofile.png,F
+jtaylor,Jackie,Taylor,jtaylor@jtaylor.com,171 W Julian St,San Jose,USA,California,95110,(555)-555-5557,Captain of the Yellowjackets.,password3,defaultprofile.png,F
+tmartinez,Travis,Martinez,tmartinez@tmartinez.com,171 W Julian St,San Jose,USA,California,95110,(555)-555-5558,,password4,defaultprofile.png,M
+nscatorccio,Natalie,Scatorccio,nscatorccio@nscatorccio.com,88 E San Carlos St,San Jose,USA,California,95112,(555)-555-5559,,password5,defaultprofile.png,F
+mquigley,Misty,Quigley,mquigley@mquigley.com,88 E San Carlos St,San Jose,USA,California,95112,(555)-555-5560,Currently working at the nursing home!!!! ALWAYS FRIENDLY!!! ,password6,defaultprofile.png,F
+sshipman,Shauna,Shipman,sshipman@sshipman.com,171 W Julian St,San Jose,USA,California,95110,(555)-555-5561,Stay at home mother,password7,defaultprofile.png,F
+tturner,Taissa,Turner,tturner@tturner.com,181 E Santa Clara St,San Jose,USA,California,95113,(555)-555-5562,Running for State Senator. Always willing to provide for my constituents.,password8,defaultprofile.png,F
+bscott,Ben,Scott,bscott@bscott.com,88 E San Carlos St,San Jose,USA,California,95112,(555)-555-5563,Former coach looking for a new profession. Currently studying kinesiology.,password9,defaultprofile.png,M
+vpalmer,Vanessa,Palmer,vpalmer@vpalmer.com,171 W Julian St,San Jose,USA,California,95110,(555)-555-5564,Video store owner and nostalgia extraordinaire!,password10,defaultprofile.png,F
+jsadecki,Jeffrey,Sadecki,jsadecki@jsadecki.com,171 W Julian St,San Jose,USA,California,95110,(555)-555-5565,Furniture store owner. Proud father and husband.,password11,defaultprofile.png,M
+cmatthews,Charlotte,Matthews,cmatthews@cmatthews.com,88 E San Carlos St,San Jose,USA,California,95112,(555)-555-5566,Wealthy heiress giving back to my community.,password12,defaultprofile.png,F
+csadecki,Callie,Sadecki,csadecki@csadecki.com,171 W Julian St,San Jose,USA,California,95110,(555)-555-5567,Extremely quiet and tolerable please just get me out of this house.,password13,defaultprofile.png,F
+cberzatto,Carmen,Berzatto,cberzatto@cberzatto.com,171 W Julian St,San Jose,USA,California,95110,(555)-555-5568,Co-owner of the Bear.,password14,defaultprofile.png,M
+rjerimovich,Richard,Jerimovich,rjerimovich@rjerimovich.com,181 E Santa Clara St,San Jose,USA,California,95112,(555)-555-5569,Original Beef forever!!!,password15,defaultprofile.png,M
+sadamu,Sydney,Adamu,sadamu@sadamu.com,88 E San Carlos St,San Jose,USA,California,95112,(555)-555-5570,"Chef, currently managing @thebear ",password16,defaultprofile.png,F
+mbrooks,Marcus,Brooks,mbrooks@mbrooks.com,171 W Julian St,San Jose,USA,California,95110,(555)-555-5571,"Pastry chef, currently studying more!",password17,defaultprofile.png,M
+tmarrero,Tina,Marrero,tmarrero@tmarrero.com,171 W Julian St,San Jose,USA,California,95110,(555)-555-5572,Sous chef in training.,password18,defaultprofile.png,F
+nberzatto,Natalie,Berzatto,nberzatto@nberzatto.com,88 E San Carlos St,San Jose,USA,California,95112,(555)-555-5573,Co-owner of the Bear.,password19,defaultprofile.png,F
+nfak,Neil,Fak,nfak@nfak.com,181 E Santa Clara St,San Jose,USA,California,95113,(555)-555-5574,Charismatic and fun guy. Ballbreakers tournaments every Friday and Saturday!,password20,defaultprofile.png,M
+sweeps,Gary,Woods,sweeps@sweeps.com,181 E Santa Clara St,San Jose,USA,California,95113,(555)-555-5575,,password21,defaultprofile.png,M
+cicero,Jimmy,Kalinowski,cicero@cicero.com,88 E San Carlos St,San Jose,USA,California,95112,(555)-555-5576,Investor.,password22,defaultprofile.png,M
+eadamu,Emmanuel,Adamu,eadamu@eadamu.com,88 E San Carlos St,San Jose,USA,California,95112,(555)-555-5577,Proud father of a brilliant chef!,password23,defaultprofile.png,M
