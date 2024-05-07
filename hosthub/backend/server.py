@@ -424,7 +424,14 @@ def make_booking():
     else:
         return ("Booking failed")
 
-
+@app.route('/searchingDate', methods = ["POST"])
+def searching():
+    input = request.get_json()
+    # r.execute_command(f"del cart_{user}")
+    re = []
+    for key in r.scan_iter('available'):
+        re.append(key)
+    return re
 
 @app.route('/uploads/<path:filename>', methods = ["GET"])
 def photoDisplay(filename):
