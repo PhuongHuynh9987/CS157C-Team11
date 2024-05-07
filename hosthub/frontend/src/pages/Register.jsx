@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import axios from "axios";
-// import LoginPage from "./LoginPage";
 
 export default function Register(){
     const [username, setUsername] = useState('');

@@ -16,7 +16,6 @@ export default function UserInfoPage(){
         if(user){
             try{
                 axios.post("/getBookingHistory", {"booking": user.bookingHistory}).then(({data})=>{
-                                console.log(data)
                                 setBooking(data.hostList);
                  })        
             }catch(e){

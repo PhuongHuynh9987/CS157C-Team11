@@ -10,7 +10,6 @@ import groceries from "../assets/groceries-svgrepo-com.svg"
 import pets from "../assets/pets.svg"
 
 export default function IndexPage (){
-    // 
     const [allHosts, setAllHosts] = useState([])
     const icons = [truckPlane, truckPlane, groceries, kitchen, bed, pets]
     const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
