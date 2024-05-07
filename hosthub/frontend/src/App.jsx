@@ -31,7 +31,6 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/account/:subpage" element={<UserInfoPage />} />
-            {/* <Route path="/account/:subpage" element={<UserInfoPage />} /> */}
             <Route path="/hostpage/:id" element={<HostInfo />} />
             <Route path="/hostSignup" element={<HostSignUp />} />
             <Route path="/editProfile" element={<EditProfile />} />

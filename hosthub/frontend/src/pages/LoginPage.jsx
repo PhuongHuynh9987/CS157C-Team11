@@ -30,10 +30,6 @@ export default function LoginPage() {
                 if (userInfo.data.hostId != undefined){
                     setIsHost(true) 
                     setReady(true)
-                    
-                    // axios.get("/checkTokenExpiry").then(({data})=>{
-                    //     setTokenExpiry(data)
-                    // }) 
                 }
                 setRedirect(true);
             }

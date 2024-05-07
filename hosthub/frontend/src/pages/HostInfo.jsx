@@ -8,7 +8,6 @@ import groceries from "../assets/groceries-svgrepo-com.svg"
 import pets from "../assets/pets.svg"
 import { UserContext } from "../UserContext.jsx";
 
-
 export default function HostInfo(){
     const {user,ready,isHost} = useContext(UserContext);
     const [host,setHost] = useState([])

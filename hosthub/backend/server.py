@@ -357,7 +357,8 @@ def add_cart():
     else:
         r.execute_command(f'hset cart_{user} host_id {host_id} date {date}')
         return {"cart": 'cart_'+user}
-    
+
+# get cart for checking out
 @app.route('/getCart', methods = ["POST"])
 def get_cart():
     input = request.get_json()
@@ -370,35 +371,6 @@ def get_cart():
             "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip,
             "owner_firstName": owner[0].firstName,
             "owner_lastName": owner[0].lastName, "date": cart_info[3], "hostId": hostData[0].pk}
-
-
-# empty the user's cart
-# @app.route("/clearCart", methods = ["POST"])
-# def clear_cart():
-#     current_user = get_jwt_identity()
-#     redis.execute_command(f"delete cart_{current_user}")
-#     return("Cart emptied.")
-
-
-# @app.route('/hostingInfo', methods = ["POST"])
-# def individual_host_info():
-#     input = request.get_json()
-#     hostData = Host.Host.find(Host.Host.pk == input["id"]) 
-#     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
-#                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
-#                 "uploadedPhotos": hostData[0].uploadedPhotos, 
-#                 'title':hostData[0].title, 'perks': hostData[0].perks,
-#                 "date":r.execute_command(f"smembers available_{hostData[0].pk}")}
-
-# getting booking
-# @app.route('/getBookingHistory', methods=["POST"])
-# def bookingHistory():
-#     input = request.get_json() 
-#     host = input["id"]
-#     hostData = Host.Host.find(Host.Host.pk == host) 
-    
-    
-#     return booking_list
 
 # getting booking
 @app.route('/getBookingHistory', methods=["POST"])
@@ -445,7 +417,6 @@ def make_booking():
                 # delete cart
                 r.execute_command(f"del cart_{user}")
 
-                # history = r.execute_command(f'lrange history_{host_id} 0 -1')
                 return {"booking_id": booking.pk}
             except Exception as e:
                 print(e)
@@ -454,7 +425,14 @@ def make_booking():
     else:
         return ("Booking failed")
 
-
+@app.route('/searchingDate', methods = ["POST"])
+def searching():
+    input = request.get_json()
+    # r.execute_command(f"del cart_{user}")
+    re = []
+    for key in r.scan_iter('available'):
+        re.append(key)
+    return re
 
 @app.route('/uploads/<path:filename>', methods = ["GET"])
 def photoDisplay(filename):
