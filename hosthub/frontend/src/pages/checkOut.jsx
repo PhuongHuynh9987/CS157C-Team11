@@ -72,7 +72,7 @@ export default function CheckOut(){
 
     return (
         <div className="flex items-center justify-center my-20">
-            <h5>hello</h5>
+            <h5></h5>
             <form onSubmit={checkout} className="bg-gray-100 w-2/3 p-10 rounded-2xl">
                 <div>
                     <h1>Booking Details</h1>

@@ -328,11 +328,12 @@ def get_hosting_info():
 def individual_host_info():
     input = request.get_json()
     hostData = Host.Host.find(Host.Host.pk == input["id"]) 
+    hostId = hostData[0].pk
     return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
                 'title':hostData[0].title, 'perks': hostData[0].perks,
-                "date":r.execute_command(f"smembers available_{hostData[0].pk}")}
+                "date":r.execute_command(f"smembers available_{hostId}")}
 
 
 @app.route('/ownerInfo', methods = ["POST"])
