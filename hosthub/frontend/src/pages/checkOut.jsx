@@ -32,6 +32,7 @@ export default function CheckOut(){
     useEffect(()=>{
         try {
             axios.post("/getCart", {"cart_id":cart_id}).then(({data})=>{
+                // console.log(data)
                 setCart(data)
             })
         }
@@ -71,6 +72,7 @@ export default function CheckOut(){
 
     return (
         <div className="flex items-center justify-center my-20">
+            <h5></h5>
             <form onSubmit={checkout} className="bg-gray-100 w-2/3 p-10 rounded-2xl">
                 <div>
                     <h1>Booking Details</h1>
