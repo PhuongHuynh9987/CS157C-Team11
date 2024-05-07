@@ -1,8 +1,8 @@
-import { Link ,Navigate} from "react-router-dom"
+import { Link ,useNavigate, useLocation,useSearchParams} from "react-router-dom"
 import Map from "../Map.jsx"
 
 import {useContext, useEffect, useState} from "react";
-import axios from "axios";
+import axios, { all } from "axios";
 import bed from "../assets/bed-solid.svg";
 import truckPlane from "../assets/truck-plane-solid.svg";
 import kitchen from "../assets/kitchen-set-solid.svg"
@@ -15,12 +15,22 @@ export default function IndexPage (){
     const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
     "Kitchen Access", "Private Bedroom", "Pets allowed"]
 
+    const {state} = useLocation();
     useEffect(()=> {
-        axios.get('/fetch_allHost').then(({data}) => {
-           setAllHosts(data)
-        })
-    },[])
+        if (state === null){
+            axios.get('/fetch_allHost').then(({data}) => {
+                console.log(data)
+                setAllHosts(data)
+             })
+        }
 
+        else {
+            const{host} = state;         
+            axios.post('/fetch_allHost', {"hostList":host}).then(({data}) => {
+                setAllHosts(data)
+                })
+        }
+    },[])
     return (
         <div className="">
            <div className="text-center">
@@ -31,7 +41,7 @@ export default function IndexPage (){
                 <div className="h-svh my-20">
                     <div className="grid gap-1 ml-10 mr-14 grid-cols-[65%_35%] h-full">
                     <div className="flex flex-col gap-5 overflow-y-scroll pr-10">
-                        {allHosts.length > 0 && allHosts.map((host,key) => (
+                        {allHosts?.length > 0 && allHosts?.map((host,key) => (
                                 <Link to={'/hostpage/'+host.pk} key={key} >
                                     <div className= "text-left border-4 border-blue-100 p-4 flex flex-col gap-3 rounded-lg">
                                         <div className="px-2">                                    

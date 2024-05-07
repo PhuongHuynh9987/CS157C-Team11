@@ -31,12 +31,14 @@ class Host(JsonModel):
 # host.save()
 # Migrator().run()
 
-# host = Host.find(Host.owner == '01HTDDNEVB6GJW94WVYFQF69JY')
+# host = Host.find(Host.pk == "01HX8HYESPYJB4ZXQWBS20VF8")
+# print(host[0])
+print("hello")
 # host.desc = "Lorem ipsum!!!"
 # host.save()
 
 # host = Host.find().all()
-# print(host)
+
 # host_list = []
 # for i in host:
 #     # print(dict(i))

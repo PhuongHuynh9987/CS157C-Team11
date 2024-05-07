@@ -62,16 +62,19 @@ Migrator().run()
 # Api route
 @app.route("/",methods = ["GET"])
 def members():
-    # input = request.get_json() 
-    re = r.execute_command(f'lrange history_{"01HTR5V62940GAYVTXSDNTXVQV"} 0 -1')
-    
-    booking_list = []
-    for i in re:
-        bookings = Booking.Booking.find(Booking.Booking.pk == i)
-        booking_list.append(dict(bookings[0]))
-    # bookings = Booking.Booking.find(Booking.Booking.pk == "01HWY98JJCNV4RXNA2K7FQFXWA")
-    return booking_list
-
+    # re = []
+    # for key in r.scan_iter('available_*'):
+    #     for i in r.smembers(key):
+    #         if "2024-05-01,2024-05-15" in i:
+    #             re.append(key)
+    # return re
+    re = []
+    for key in r.scan_iter('available_*'):
+        for i in r.smembers(key):
+            if "2024-05-01,2024-05-15" in i:
+                re.append(key[10:])  
+                break
+    return re
 
 @app.errorhandler(HTTPException)
 def handle_exception(e):
@@ -306,6 +309,23 @@ def fetch_allHost():
         host_list.append(dict(i))
     return host_list
 
+# see all hostings with input
+@app.route('/fetch_allHost', methods = ["POST"])
+def fetch_allHost_input():
+    input = request.get_json()
+    inputHost = input["hostList"]
+    host_list = []
+    # hostData = Host.Host.find(Host.Host.pk == inputHost[5]) 
+    for i in inputHost:
+        hostData = Host.Host.find(Host.Host.pk == i) 
+        host = {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
+                    "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
+                    "uploadedPhotos": hostData[0].uploadedPhotos, 
+                    'title':hostData[0].title, 'perks': hostData[0].perks, 
+                    "date":r.execute_command(f"smembers available_{hostData[0].pk}")}
+        host_list.append(host)
+    return host_list
+
 # see hosting info
 @app.route('/hostingInfo', methods = ["GET"])
 def get_hosting_info():
@@ -314,7 +334,7 @@ def get_hosting_info():
         current_user = get_jwt_identity()
         hostData = Host.Host.find(Host.Host.owner == current_user) 
         hostId = hostData[0].pk
-        print(r.execute_command(f"smembers available_{hostId}"))
+
         return {"id": hostData[0].pk,"desc": hostData[0].desc, "address":hostData[0].address,
                 "city": hostData[0].city,"state":hostData[0].state, "zip":hostData[0].zip, 
                     "uploadedPhotos": hostData[0].uploadedPhotos, 
@@ -333,7 +353,6 @@ def individual_host_info():
                 "uploadedPhotos": hostData[0].uploadedPhotos, 
                 'title':hostData[0].title, 'perks': hostData[0].perks,
                 "date":r.execute_command(f"smembers available_{hostData[0].pk}")}
-
 
 @app.route('/ownerInfo', methods = ["POST"])
 def ownerInfo():
@@ -389,15 +408,12 @@ def bookingHistory():
 def make_booking():
     input = request.get_json()
     user = input["user"]
-
     # check for cart hash by user id
     cart_status = r.execute_command(f"EXISTS cart_{user}")
-
     if cart_status == 1:
         try:
             host_id = r.execute_command(f'hget cart_{user} host_id')
             date = r.execute_command(f'hget cart_{user} date')
-
             # create booking
             booking = Booking.Booking(
                 user = user,
@@ -405,12 +421,10 @@ def make_booking():
                 date = date
             )
             booking.save()
-            
             # add booking to history for user and host
             try: 
                 r.execute_command(f'lpush history_{user} {booking.pk}')
                 r.execute_command(f'lpush history_{host_id} {booking.pk}')
-               
                 # remove from availabilities on booking
                 r.execute_command(f'srem available_{host_id} {date}')
                 # delete cart
@@ -427,10 +441,12 @@ def make_booking():
 @app.route('/searchingDate', methods = ["POST"])
 def searching():
     input = request.get_json()
-    # r.execute_command(f"del cart_{user}")
     re = []
-    for key in r.scan_iter('available'):
-        re.append(key)
+    for key in r.scan_iter('available_*'):
+        for i in r.smembers(key):
+            if f'{input["date"]}' in i:
+                re.append(key[10:])   
+                break
     return re
 
 @app.route('/uploads/<path:filename>', methods = ["GET"])

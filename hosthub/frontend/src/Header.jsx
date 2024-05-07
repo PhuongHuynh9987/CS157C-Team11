@@ -1,4 +1,4 @@
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate , useNavigate} from "react-router-dom";
 import img from "./assets/HostHub.png";
 import { useContext, useEffect, useRef, useState } from "react";
 import Multiselect from 'multiselect-react-dropdown';
@@ -12,7 +12,6 @@ export default function Header(){
   const [toDate, setToDate] = useState('')
   const [redirect, setRedirect] = useState(false)
   const {user,setUser,setIsHost} = useContext(UserContext)
-
   const perkList = ["Airport dropoff", "Airport pickup","Groceries provided",
   "Kitchen Access", "Private Bedroom", "Pets allowed"]
 
@@ -27,12 +26,15 @@ export default function Header(){
 
   const outsideClick=(e) => {
     if(screen.current && !screen.current.contains(e.target)){
-      setShowList(false);
+      setShowList(false);    
     }
+    
   }
 
   function removeToggle(){
     if (showList === true) setShowList(false);
+    navigate('/', { state: null });
+    navigate(0)
   }
 
   async function logout(){
@@ -45,17 +47,22 @@ export default function Header(){
   if (redirect){
     <Navigate to={'/login'} />
   }
-
+  const navigate = useNavigate();
   function searching(ev){
     ev.preventDefault();
     const searchAvailability = [fromDate,toDate].join();
     axios.post('/searchingDate', {"date":searchAvailability}).then(({data}) => {
       console.log(data);
+      // if( data.length !== 0 ){    
+        navigate('/', { state: {host:data } });
+        navigate(0)
+      // }
+
     })
   }
 
     return (
-        <div className="h-28" ref ={screen} onClick={removeToggle}>
+        <div className="h-28" ref ={screen} >
           <header className="flex items-center justify-between gap-6 mx-4" >
               <div className="flex items-center justify-center">
               <Link to= {"/"} className="flex gap-1 items-center">   
