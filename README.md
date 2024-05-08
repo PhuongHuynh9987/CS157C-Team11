@@ -30,6 +30,10 @@
       - Phuong finished the frontend
       - Elena will make instances for demo
       - Team members will meet up today to prepare for the presentation.
+  - May 7th
+      - Finished search bar engine
+      - The group presented
+  - Report due on May 20th, need to find a day to work on that
   
 ### Data Model:
 - User: JsonModel
