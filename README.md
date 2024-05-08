@@ -38,10 +38,11 @@
 ### Data Model:
 - User: JsonModel
 - Host: JsonModel
-- Availability: Lis
+- Booking: JsonModel
+- Availability: List
 - Cart: hash
-- Review (not yet implemented)
-- 
+- Review: list (not yet implemented)
+  
 <img src="https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/c143dbe2-c64a-4776-b6a3-89e663d51d28" width="500">
 
 ### UX/UI
@@ -51,9 +52,11 @@
 - Download python and redis-stack-server
 - Clone the repo, then in Visual Studio Code, open the folder and in the terminal,
    - Frontend:
-      + cd to frontend
+      + cd frontend
       + npm run dev (or yarn if use yarn)
    - Backend:
-      + cd to backend
+      + cd backend
       + source venv/bin/activate
       + python server.py
+   - DB:
+      + redis-stack-server
