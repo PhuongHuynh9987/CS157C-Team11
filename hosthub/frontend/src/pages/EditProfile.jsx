@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 import axios from "axios";
 
 export default function EditProfile(){
-    const {user,ready, tokenExpiry} = useContext(UserContext);
+    const {user,ready} = useContext(UserContext);
     const [uploading, setUploadingAction] = useState(false);
     const checkBox = ['Freshman', 'Sophormore', 'Junior','Senior','Exchange Student', 'Graduate']
     const [status, setStatus] = useState('');
@@ -27,9 +27,7 @@ export default function EditProfile(){
         return <Navigate to = {'/login'} />
     }
 
-    else if (tokenExpiry === 'token_expire')
-        return <Navigate to = {'/'} />
-
+    
     useEffect(()=> {
         axios.get('/profile').then(({data}) => {
             setFirstName(data.firstName),
@@ -46,6 +44,9 @@ export default function EditProfile(){
             setCountry(data.country)
         })
     },[])
+
+
+  
 
     function editPhoto(){
         if (uploading)
@@ -121,8 +122,8 @@ export default function EditProfile(){
         }
    }
 
-   if (redirect){
-    return <Navigate to ={'/account/profile'} />
+    if (redirect){
+        return <Navigate to = {'/account/profile'} />
     }
 
     return (
@@ -140,16 +141,17 @@ export default function EditProfile(){
                 <div className="flex justify-center my-8 items-center gap-5">
                     <h2 className="underline cursor-pointer" onClick={editPhoto}>Edit photo</h2>
                     {uploading && (
-                            <label htmlFor="Upload" className="border border-blue-100 px-10 py-1 rounded-2xl flex items-center justify-center gap-2 cursor-pointer">
+                            <label className="border border-blue-100 px-10 py-1 rounded-2xl flex items-center justify-center gap-2 cursor-pointer">
                                 <input type="file" 
                                         className="hidden" 
+                                        // value={profilePhoto}
                                         onChange={uploadingPhotos}/>
                                 <div className="">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                                     </svg> 
                                 </div>
-                                <h2 className="">Upload</h2>
+                                <h2>Upload</h2>
                             </label>
                         )}
                 </div>

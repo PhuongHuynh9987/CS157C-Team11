@@ -33,7 +33,6 @@ class Host(JsonModel):
 
 # host = Host.find(Host.pk == "01HX8HYESPYJB4ZXQWBS20VF8")
 # print(host[0])
-print("hello")
 # host.desc = "Lorem ipsum!!!"
 # host.save()
 

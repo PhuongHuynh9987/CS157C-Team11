@@ -1,6 +1,6 @@
 import { React,  useContext,useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useParams ,useNavigate} from "react-router-dom";
 import HostSignUp from "./HostSignup";
 import EditProfile from "./EditProfile";
 import axios from "axios";
@@ -8,10 +8,13 @@ import axios from "axios";
 export default function UserInfoPage(){
     const [booking, setBooking] = useState([]);
     const {user,ready,isHost} = useContext(UserContext);
-    
+    let count = 0;
     if (ready && !user){
         return <Navigate to = {'/login'} />
     }
+
+ 
+
     useEffect(() =>{
         if(user){
             try{
