@@ -30,25 +30,33 @@
       - Phuong finished the frontend
       - Elena will make instances for demo
       - Team members will meet up today to prepare for the presentation.
+  - May 7th
+      - Finished search bar engine
+      - The group presented
+  - Report due on May 20th, need to find a day to work on that
   
 ### Data Model:
 - User: JsonModel
 - Host: JsonModel
-  - Availability (list?)
-- Cart
-- Review?
+- Booking: JsonModel
+- Availability: List
+- Cart: hash
+- Review: list (not yet implemented)
+  
 <img src="https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/c143dbe2-c64a-4776-b6a3-89e663d51d28" width="500">
 
 ### UX/UI
 <img src="https://github.com/PhuongHuynh9987/CS157C-Team11/assets/54336313/a33ea9c2-0922-41d0-b4a3-a8184b569916" width="900">
 
 ### Implementation:
-- Download python3 and redis-stack-server
+- Download python and redis-stack-server
 - Clone the repo, then in Visual Studio Code, open the folder and in the terminal,
    - Frontend:
-      + cd to frontend
+      + cd frontend
       + npm run dev (or yarn if use yarn)
    - Backend:
-      + cd to backend
+      + cd backend
       + source venv/bin/activate
-      + python3 server.py
+      + python server.py
+   - DB:
+      + redis-stack-server
