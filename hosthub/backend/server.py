@@ -158,7 +158,6 @@ def chec_token_expiry():
     return str(get_jwt()["exp"])
 
 # log out of user account
-
 @app.route("/logout", methods = ["POST"] )
 def logout():
     response = jsonify({'logout': True})
@@ -292,6 +291,9 @@ def hosting_update():
         host.save()
         # take input of availabilities and add to available_{host_id} set
         available = input['available']
+        
+        #clear availabilities
+        r.execute_command(f'del available_{hostId}')
 
         for str in available:
             r.execute_command(f'sadd available_{hostId} {str}')
